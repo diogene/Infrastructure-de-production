@@ -22,6 +22,8 @@ import java.util.List;
 import org.springframework.samples.petclinic.vets.model.Vet;
 import org.springframework.samples.petclinic.vets.model.VetRepository;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,15 +34,21 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Arjen Poutsma
  * @author Maciej Szarlinski
  */
-@RequestMapping("/vets")
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
 class VetResource {
 
     private final VetRepository vetRepository;
 
-    @GetMapping
+    @GetMapping("/vets")
     public List<Vet> showResourcesVetList() {
         return vetRepository.findAll();
+    }
+
+    
+    @PostMapping("/vet")
+    public Vet saveVet(@RequestBody Vet vet) {
+        return vetRepository.saveAndFlush(vet);
     }
 }
