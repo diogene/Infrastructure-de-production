@@ -1,1 +1,10 @@
 /.apt_generated/
+
+
+.project
+.settings/
+.classpath
+target
+
+.factorypath
+.attach_*
