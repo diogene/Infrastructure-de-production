@@ -1,0 +1,12 @@
+{
+  "datacenter": "dc1",
+  "data_dir": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\data_dir",
+  "log_level": "DEBUG",
+  "ca_file": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\rootCA.pem",
+  "cert_file": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\consul.pem",
+  "key_file": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\consul.key",
+  "verify_incoming": true,
+  "verify_outgoing": true,
+  "server": true,
+  "bootstrap" : true
+}
