@@ -1,0 +1,66 @@
+
+openssl genrsa -out consul/rootCA.key 2048
+openssl req -x509 -new -nodes -key consul/rootCA.key -sha256 -days 1024 -out consul/rootCA.pem
+
+-----
+Country Name (2 letter code) [FR]:
+State or Province Name (full name) [Loiret]:
+Locality Name (eg, city) [Orleans]:
+Organization Name (eg, company) [diogene Ltd]:
+Organizational Unit Name (eg, section) []:Diogene Ltd Certificate Authority
+Common Name (e.g. server FQDN or YOUR name) []:Diogene Ltd Root CA
+Email Address []:
+
+
+
+openssl genrsa -out consul/consul.key 2048
+openssl req -new -key consul/consul.key -out consul/consul.csr
+
+-----
+Country Name (2 letter code) [FR]:
+State or Province Name (full name) [Loiret]:
+Locality Name (eg, city) [Orleans]:
+Organization Name (eg, company) [diogene Ltd]:
+Organizational Unit Name (eg, section) []:Diogene Ltd Certificate Authority
+Common Name (e.g. server FQDN or YOUR name) []:localhost
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+
+
+
+openssl x509 -req -in consul/consul.csr -CA consul/rootCA.pem -CAkey consul/rootCA.key -CAcreateserial -out consul/consul.pem -days 500 -sha256
+
+
+
+openssl genrsa -out consul/spring.key 2048
+openssl req -new -key consul/spring.key -out consul/spring.csr
+
+-----
+Country Name (2 letter code) [FR]:
+State or Province Name (full name) [Loiret]:
+Locality Name (eg, city) [Orleans]:
+Organization Name (eg, company) [diogene Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:serveurdev.sogecap.socgen
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+
+openssl x509 -req -in consul/spring.csr -CA consul/rootCA.pem -CAkey consul/rootCA.key -CAcreateserial -out consul/spring.pem -days 500 -sha256
+
+keytool -import -alias rootca -file  consul/rootCA.pem -keystore  consul/truststore.jks -storepass changeit
+ 
+openssl pkcs12 -export -in consul/spring.pem -inkey consul/spring.key -chain -CAfile  consul/rootCA.pem -out consul/server.p12 -name tomcat  -passout pass:Pa55w0rd
+
+
+
+java -Djavax.net.ssl.trustStore=P:\\dev\\ca\\consul\\truststore.jks -Djavax.net.ssl.trustStorePassword=changeit -jar target/spring-petclinic-admin-server-2.0.4.jar

@@ -10,7 +10,7 @@ spring:
       discovery:
         instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         healthCheckInterval: 15s
-        hostname: localhost
+        hostname: serveurdev.sogecap.socgen
         scheme: https
       config:
         enabled: true

@@ -15,31 +15,43 @@
  */
 package org.springframework.samples.petclinic.vets.web;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.samples.petclinic.vets.model.Vet;
-import org.springframework.samples.petclinic.vets.model.VetRepository;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-
 import static java.util.Arrays.asList;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.samples.petclinic.vets.model.Vet;
+import org.springframework.samples.petclinic.vets.model.VetRepository;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+
 /**
  * @author Maciej Szarlinski
  */
 @ExtendWith(SpringExtension.class)
+@AutoConfigureMockMvc
 @WebMvcTest(VetResource.class)
 @ActiveProfiles("test")
 class VetResourceTest {
+
+
+    @Configuration
+    @EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class})
+    static class ContextConfiguration { }
+
 
     @Autowired
     MockMvc mvc;
@@ -47,7 +59,7 @@ class VetResourceTest {
     @MockBean
     VetRepository vetRepository;
 
-    @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void shouldGetAListOfVets() throws Exception {
 
         Vet vet = new Vet();
@@ -55,8 +67,7 @@ class VetResourceTest {
 
         given(vetRepository.findAll()).willReturn(asList(vet));
 
-        mvc.perform(get("/api/vets").accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id").value(1));
+        mvc.perform(get("/api/vets").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1));
     }
 }

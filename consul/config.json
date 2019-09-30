@@ -1,12 +1,14 @@
 {
-  "datacenter": "dc1",
-  "data_dir": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\data_dir",
-  "log_level": "DEBUG",
-  "ca_file": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\rootCA.pem",
-  "cert_file": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\consul.pem",
-  "key_file": "D:\\dev\\etudes\\cours\\tp3\\consul.io\\consul.key",
-  "verify_incoming": true,
-  "verify_outgoing": true,
-  "server": true,
-  "bootstrap" : true
+	"datacenter": "dc1",
+	"log_level": "DEBUG",
+	"data_dir": "P:\\dev\\consul.io\\data_dir",
+	"ca_file": "P:\\dev\\ca\\consul\\rootCA.pem",
+	"cert_file": "P:\\dev\\ca\\consul\\consul.pem",
+	"key_file": "P:\\dev\\ca\\consul\\consul.key",
+	"verify_incoming": true,
+	"verify_outgoing": false,
+	"server": true,
+	"bootstrap": true,
+	"verify_server_hostname": false,
+	"ui":true
 }
