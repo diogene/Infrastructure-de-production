@@ -1,0 +1,33 @@
+{
+    "datacenter": "dc1",
+    "log_level": "DEBUG",
+    "data_dir": "/home/etud/diogene.moulron/TP/03/consul.io/data_dir",
+    "ca_file": "/home/etud/diogene.moulron/TP/03/ca/rootCA.pem",
+    "cert_file": "/home/etud/diogene.moulron/TP/03/ca/consul.pem",
+    "key_file": "/home/etud/diogene.moulron/TP/03/ca/consul.key",
+    "verify_incoming": true,
+    "verify_outgoing": true,
+    "server": true,
+    "bootstrap": true,
+    "verify_server_hostname": false,
+    "ui":true,
+
+	
+  "services": [
+    {
+      "name": "petclinic-vets",
+      "address": "pcl-e09-19.deptinfo.univ-orleans.fr",
+      "port": 8888,
+      "checks": [
+        {
+          "id": "api",
+          "name": "HTTP API",
+          "http": "https://pcl-e09-19.deptinfo.univ-orleans.fr:8888/actuator/health",
+          "tls_skip_verify": true,
+          "interval": "5s",
+          "timeout": "1s"
+        }
+      ]
+    }
+  ]
+}
