@@ -1,0 +1,1 @@
+set JAVA_OPTS=-Xms64M -Xmx64M
