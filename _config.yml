@@ -1,0 +1,12 @@
+name: "Infrastructure de production"
+description: "TP du module Infrastructure de production de l'université d'Orléans"
+markdown: kramdown
+plugins:
+    - jekyll-relative-links
+  relative_links:
+    enabled: true
+    collections: true
+  include:
+    - readme.md
+    - tps/TP1/readme.md
+theme: Slate
