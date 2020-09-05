@@ -5,25 +5,7 @@ L’objectif de ce TP est de mettre en place une infrastructure pour exposer une
 
 L’application exemple est l’application petclinic de spring.
 
-<!-- TOC -->
-
-- [PACKAGER UNE APPLICATION](#packager-une-application)
-  - [Les éléments de notation](#les-éléments-de-notation)
-  - [La gestion de code](#la-gestion-de-code)
-    - [git](#git)
-    - [maven](#maven)
-  - [Le deploiement continue avec gitlab](#le-deploiement-continue-avec-gitlab)
-    - [un peu de yml](#un-peu-de-yml)
-    - [gitlab ci](#gitlab-ci)
-  - [Deployer son application](#deployer-son-application)
-    - [préparation](#préparation)
-    - [Lancement via Tomcat](#lancement-via-tomcat)
-    - [Lancement via le jar](#lancement-via-le-jar)
-    - [Lancement dans tomcat via docker](#lancement-dans-tomcat-via-docker)
-    - [Lancement en jar via docker](#lancement-en-jar-via-docker)
-    - [Gestion des resources JNDI, hors docker](#gestion-des-resources-jndi-hors-docker)
-
-<!-- /TOC -->
+<!-- TOC -->autoauto- [PACKAGER UNE APPLICATION](#packager-une-application)auto    - [Les éléments de notation](#les-éléments-de-notation)auto    - [La gestion de code](#la-gestion-de-code)auto        - [git](#git)auto        - [maven](#maven)auto    - [Le deploiement continue avec gitlab](#le-deploiement-continue-avec-gitlab)auto        - [un peu de yml](#un-peu-de-yml)auto        - [gitlab ci](#gitlab-ci)auto    - [Deployer son application](#deployer-son-application)auto        - [préparation](#préparation)auto        - [Lancement via Tomcat](#lancement-via-tomcat)auto        - [Lancement via le jar](#lancement-via-le-jar)auto        - [Lancement dans tomcat via docker](#lancement-dans-tomcat-via-docker)auto        - [Lancement en jar via docker](#lancement-en-jar-via-docker)auto        - [Gestion des resources JNDI, hors docker](#gestion-des-resources-jndi-hors-docker)autoauto<!-- /TOC -->
 
 ---
 
@@ -121,6 +103,13 @@ A partir des sources précédentes on va modifier la facon dont fonctionne maven
    cd spring-framework-petclinic
    ./mvnw clean install
    ```
+
+Il existe de nombreuses options pour le lancement de maven qui permettent son utilisation dans des chaines de continous delivery :
+
+a. -amd -pl  module :  permet d'agir sur un module en particulier. l'option amd permet de dire a maven d'agir, aussi, sur les modules dont dépend le courant
+b. -f ./module/pom.xml : lance la commande maven sur le pom spécifié
+c. -DscmCommentPrefix="[skip ci]" : ajoute en début de commit un element
+d. -Darguments="-Dmaven.deploy.skip=true"  : indique a maven les arguments a ajouter pour toutes les commandes intra maven
 
 ---
 ## Le deploiement continue avec gitlab
