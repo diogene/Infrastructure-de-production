@@ -5,7 +5,7 @@ L’objectif de ce TP est de mettre en place une infrastructure pour exposer une
 
 L’application exemple est l’application petclinic de spring.
 
-<!-- TOC -->autoauto- [PACKAGER UNE APPLICATION](#packager-une-application)auto    - [Les éléments de notation](#les-éléments-de-notation)auto    - [La gestion de code](#la-gestion-de-code)auto        - [git](#git)auto        - [maven](#maven)auto    - [Le deploiement continue avec gitlab](#le-deploiement-continue-avec-gitlab)auto        - [un peu de yml](#un-peu-de-yml)auto        - [gitlab ci](#gitlab-ci)auto    - [Deployer son application](#deployer-son-application)auto        - [préparation](#préparation)auto        - [Lancement via Tomcat](#lancement-via-tomcat)auto        - [Lancement via le jar](#lancement-via-le-jar)auto        - [Lancement dans tomcat via docker](#lancement-dans-tomcat-via-docker)auto        - [Lancement en jar via docker](#lancement-en-jar-via-docker)auto        - [Gestion des resources JNDI, hors docker](#gestion-des-resources-jndi-hors-docker)autoauto<!-- /TOC -->
+{:toc}
 
 ---
 
@@ -67,7 +67,7 @@ git clone https://github.com/spring-petclinic/spring-framework-petclinic.git
    git lga
    ```
    Le commit de merge est visible
-   ```
+   ```bash
    *   bf6efcf - (HEAD -> master) Merge branch 'branche-travail' (MOULRON Diogène 23 seconds ago)
    ```
 5. Préparation pour faire le rebase
@@ -106,10 +106,10 @@ A partir des sources précédentes on va modifier la facon dont fonctionne maven
 
 Il existe de nombreuses options pour le lancement de maven qui permettent son utilisation dans des chaines de continous delivery :
 
-a. -amd -pl  module :  permet d'agir sur un module en particulier. l'option amd permet de dire a maven d'agir, aussi, sur les modules dont dépend le courant
-b. -f ./module/pom.xml : lance la commande maven sur le pom spécifié
-c. -DscmCommentPrefix="[skip ci]" : ajoute en début de commit un element
-d. -Darguments="-Dmaven.deploy.skip=true"  : indique a maven les arguments a ajouter pour toutes les commandes intra maven
+* -amd -pl  module :  permet d'agir sur un module en particulier. l'option amd permet de dire a maven d'agir, aussi, sur les modules dont dépend le courant
+* -f ./module/pom.xml : lance la commande maven sur le pom spécifié
+* -DscmCommentPrefix="[skip ci]" : ajoute en début de commit un element
+* -Darguments="-Dmaven.deploy.skip=true"  : indique a maven les arguments a ajouter pour toutes les commandes intra maven
 
 ---
 ## Le deploiement continue avec gitlab
@@ -123,7 +123,7 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
    yaml2json < source.yml > dest.json
    ```
 2. maitriser les blocs litérals
-   ```yml
+   {% highlight yaml %}
    # Les commandes qui s'executent avant le script de chaque job
    before_script:
      - export JAVA_HOME=$JAVA_HOME_DEFAUT
@@ -132,10 +132,10 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
          export JAVA_HOME=$JAVA_HOME_7
        fi
      - export M2_HOME=$M2_HOME
-   ```
+   {% endhighlight %}
    quel est la forme du json
 3. maitriser les ancres
-   ```yml
+   ```yaml
    # Les commandes qui s'executent avant le script de chaque job
    common_script: &before
      - export JAVA_HOME=$JAVA_HOME_DEFAUT
@@ -149,7 +149,7 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
    ```
    quel est la forme du json
 4. maitriser les extensions
-   ```yml
+   ```yaml
    # Les commandes qui s'executent avant le script de chaque job
    common_script: &before
      - export JAVA_HOME=$JAVA_HOME_DEFAUT
@@ -251,7 +251,7 @@ La **troisème étape** consiste a directement lancer le jar :
 ### Lancement en jar via docker
 Via docker il faut passer par un docker compose :
 
-   ```yml
+   ```yaml
    version: '3'
    services:
      petclinic:

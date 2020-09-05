@@ -3,18 +3,8 @@
 L’objectif de ce TP est de mettre en place une infrastructure pour exposer une application.
 
 ----
-<!-- TOC -->
 
-- [EXPOSER DES APPLICATIONS](#exposer-des-applications)
-  - [Les éléments de notation](#les-éléments-de-notation)
-  - [Installer les composants](#installer-les-composants)
-  - [Préparation de l'application](#préparation-de-lapplication)
-  - [Installer la console d'administration](#installer-la-console-dadministration)
-  - [Modification de notre application pour le cloud](#modification-de-notre-application-pour-le-cloud)
-  - [Ajouter tous les menus](#ajouter-tous-les-menus)
-
-<!-- /TOC -->
-
+{:toc}
 
 
 ## Les éléments de notation
