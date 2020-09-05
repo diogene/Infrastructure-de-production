@@ -33,11 +33,7 @@ La comprehension du fonctionnement de git et de maven est indispensable pour met
    lga = log --graph --pretty=tformat:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%an %cr)%Creset' --abbrev-commit --date=relative --all -30
    ```
 
-2. Télécharger les sources  (source)
-```bash
-git clone https://github.com/spring-petclinic/spring-framework-petclinic.git
-```
-
+2. Télécharger les sources  `git clone https://github.com/spring-petclinic/spring-framework-petclinic.git`{:.language-bash .highlight}
 1. utilisation de la commande reset pour positionner le pointeur de courant sur le deuxième commit
    ```bash
    git lga
@@ -96,9 +92,11 @@ git clone https://github.com/spring-petclinic/spring-framework-petclinic.git
 
 ### maven
 
-A partir des sources précédentes on va modifier la facon dont fonctionne maven :
+A partir des sources suivante, on va modifier la facon dont fonctionne maven :
 
-1. Lancer la compilation sur le projet spring framework, methode standard :
+1. `git clone https://github.com/diogene/Infrastructure-de-production.git`{:.language-bash .highlight}
+2. aller dans le repertoire `cd codes`{:.language-bash .highlight}
+3. Lancer la compilation sur le projet spring framework, methode standard :
    ```bash
    cd spring-framework-petclinic
    ./mvnw clean install
@@ -110,6 +108,8 @@ Il existe de nombreuses options pour le lancement de maven qui permettent son ut
 * -f ./module/pom.xml : lance la commande maven sur le pom spécifié
 * -DscmCommentPrefix="[skip ci]" : ajoute en début de commit un element
 * -Darguments="-Dmaven.deploy.skip=true"  : indique a maven les arguments a ajouter pour toutes les commandes intra maven
+
+2. compiler uniquement le module 
 
 ---
 ## Le deploiement continue avec gitlab
@@ -123,7 +123,8 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
    yaml2json < source.yml > dest.json
    ```
 2. maitriser les blocs litérals
-   {% highlight yaml %}
+
+   ```yaml
    # Les commandes qui s'executent avant le script de chaque job
    before_script:
      - export JAVA_HOME=$JAVA_HOME_DEFAUT
@@ -132,9 +133,10 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
          export JAVA_HOME=$JAVA_HOME_7
        fi
      - export M2_HOME=$M2_HOME
-   {% endhighlight %}
+   ```
    quel est la forme du json
 3. maitriser les ancres
+
    ```yaml
    # Les commandes qui s'executent avant le script de chaque job
    common_script: &before
@@ -149,6 +151,7 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
    ```
    quel est la forme du json
 4. maitriser les extensions
+
    ```yaml
    # Les commandes qui s'executent avant le script de chaque job
    common_script: &before
