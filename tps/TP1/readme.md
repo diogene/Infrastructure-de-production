@@ -14,6 +14,13 @@ L’application exemple est l’application petclinic de spring.
 * Réponse au [qcm](https://docs.google.com/forms/d/1YAidZb2c8ftaFd-GVhQTh_mBp_-SfeOdjG5L64y5DDU)
 * pour chaque partie, mettez dans bitbucket une résumé de vos actions.
 
+## La gestion des droits
+
+la plupart des binaires (mvnw, yaml2json, ...) téléchargés n'auront pas les droits d'execution. pour leur donner le droit :
+```bash
+chmod +x <binaire>
+```
+
 ---
 ## La gestion de code 
 
@@ -87,7 +94,8 @@ La comprehension du fonctionnement de git et de maven est indispensable pour met
    aucun commit visible pour signaler le rebase, seul le point de branchement par rapport au master est visible
 7. un exemple de retravail de l'historique
    ```bash
-   git rebase -i 
+   git checkout master
+   git rebase -i <commit id>
    ```
    fusionner les deux derniers commits
 
@@ -106,7 +114,8 @@ Il existe de nombreuses options pour le lancement de maven qui permettent son ut
 * -DscmCommentPrefix="[skip ci]" : ajoute en début de commit un element
 * -Darguments="-Dmaven.deploy.skip=true"  : indique a maven les arguments a ajouter pour toutes les commandes intra maven
 
-2. compiler uniquement le module `spring-petclinic-visits-service`
+1. compiler uniquement le module `spring-petclinic-visits-service`
+2. compiler le module `spring-petclinic-tracing-server` et toutes ses dépendances 
 
 ---
 ## Le deploiement continue avec gitlab
@@ -144,7 +153,7 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
        fi
      - export M2_HOME=$M2_HOME
     
-    before_script: *common_script
+   before_script: *before
    ```
    quel est la forme du json
 4. maitriser les extensions
@@ -159,7 +168,7 @@ avant de commencer a creer son gitlab-ci il faut faire de yml.
        fi
      - export M2_HOME=$M2_HOME
     
-    job<<: *common_script
+    job<<: *before
       stage: specific
       tags:
         - oslxgit02  
