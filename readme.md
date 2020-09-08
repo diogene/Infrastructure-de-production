@@ -21,3 +21,25 @@ le cours infrastructure est découpé en 7 TPs :
 5. [SUIVI DES LOGS](tps/TP5)
 6. [MONITORER UNE APPLICATION](tps/TP6)
 7. [ARCHITECTURE RÉSILIENTE](tps/TP7)
+
+
+
+# COnfiguration de la console 
+
+
+Installer la personnalisation de la console :
+`https://github.com/ohmybash/oh-my-bash/`
+
+Installer les fonts 
+`https://github.com/powerline/fonts`
+
+rafraichir la liste des fonts disponibles : 
+```bash 
+fc-cache -f -v
+```
+
+dans `Edition` > `Préférences` > `Apparence` > `Police` sélectionner `Ubunto Mono derivative Powerline Regular`
+
+Fermer le terminal 
+
+
