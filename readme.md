@@ -1,3 +1,9 @@
+
+# Cours infrastructure
+
+vous trouverez les slides de la présentation du cours dans le répertoire `cours`
+
+
 # TP du cours d'infrastructure de production
 
 ---

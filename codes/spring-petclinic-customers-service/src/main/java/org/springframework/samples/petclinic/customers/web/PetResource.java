@@ -35,6 +35,9 @@ import java.util.Optional;
 @Slf4j
 class PetResource {
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     private final PetRepository petRepository;
 
     private final OwnerRepository ownerRepository;
@@ -80,7 +83,9 @@ class PetResource {
 
     @GetMapping("owners/*/pets/{petId}")
     public PetDetails findPet(@PathVariable("petId") int petId) {
-        return new PetDetails(findPetById(petId));
+        List<Visit> visits =  this.restTemplate.getForObject("https://petclinic-visits/owners/*/pets/" + petId, String.class);
+  
+        return new PetDetails(findPetById(petId), visits);
     }
 
 
