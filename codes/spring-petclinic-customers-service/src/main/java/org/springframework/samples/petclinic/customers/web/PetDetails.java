@@ -18,10 +18,12 @@ package org.springframework.samples.petclinic.customers.web;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.customers.model.Pet;
 import org.springframework.samples.petclinic.customers.model.PetType;
+import org.springframework.samples.petclinic.customers.model.Visit;
 
 /**
  * @author mszarlinski@bravurasolutions.com on 2016-12-05.

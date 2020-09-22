@@ -11,7 +11,7 @@ L’objectif de ce TP est de mettre en place une infrastructure pour exposer une
 Envoyer par email les éléments suivant : 
 
 * fichier de configuration, a mettre dans votre repository git
-* Réponse au qcm
+* Réponse au [qcm](https://docs.google.com/forms/d/1mZa3mEjxPy7gEFswc6Ok3iAAr79FHaIW_fIWUd7Idsk)
 
 ## Installer les composants 
 
@@ -85,7 +85,7 @@ La console d'administration va nous permettre de visualisation les modifications
    ```yml
    bootstrap.yml
    spring:
-     cloud:
+     cloud:l
        consul:
          host: localhost
          port: 8500
@@ -159,12 +159,12 @@ Pour ce service on va mettre plus de données
 
 1. dans le projet `spring-petclinic-customers-service` ajouter le service discovery
 2. dans le projet `spring-petclinic-customers-service` ajouter l'enregistrement dans springboot admin
-3. dans le projet `spring-petclinic-customers-service` mettre `spring-petclinic-visits-service` en dépendance
+3. dans le projet `spring-petclinic-customers-service` copier la class `Visit`  du projet `spring-petclinic-visits-service`
 4. dans le projet `spring-petclinic-customers-service` ajouter la dependance `ribbon` 
    ```xml
    <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-ribbon</artifactId>
+      <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
    </dependency>
    ```
 5. dans le projet `spring-petclinic-customers-service`, le service `@GetMapping("owners/*/pets/{petId}")` appeler le service `@GetMapping("owners/*/pets/{petId}/visits")` qui se trouve dans le projet `spring-petclinic-visits-service`
