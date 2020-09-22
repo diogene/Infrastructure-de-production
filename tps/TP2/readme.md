@@ -11,7 +11,7 @@ L’objectif de ce TP est de mettre en place une infrastructure pour exposer une
 Envoyer par email les éléments suivant : 
 
 * fichier de configuration, a mettre dans votre repository git
-* Réponse au qcm
+* Réponse au [qcm](https://docs.google.com/forms/d/1mZa3mEjxPy7gEFswc6Ok3iAAr79FHaIW_fIWUd7Idsk)
 
 ## Installer les composants 
 
