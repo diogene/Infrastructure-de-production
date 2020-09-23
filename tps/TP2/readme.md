@@ -83,7 +83,6 @@ La console d'administration va nous permettre de visualisation les modifications
    ```
 5. localiser le fichiers bootstrap.yml
    ```yml
-   bootstrap.yml
    spring:
      cloud:l
        consul:
@@ -96,8 +95,12 @@ La console d'administration va nous permettre de visualisation les modifications
      application:
        name: petclinic-visits
    ```
-5. Redémarrer
-6. L'application doit maintenant être enregistré et visible dans la console consul
+5. dans le fichier `VisitResourceTest` ajouter la ligne :
+   ```java
+   @TestPropertySource(properties = {"spring.cloud.consul.config.enabled=false"})
+   ```
+6. Redémarrer `spring-visits`
+7. L'application doit maintenant être enregistré et visible dans la console consul
 ![consul avec l'application](./consul%20ajout%20visit.png)
 
 
@@ -155,39 +158,97 @@ Pour ce service on va mettre plus de données
    ```
 
 
-   ## Utilisation de ribbon
+## Utilisation de ribbon
+
+ ### On commence par tester la version en mode automatique :
 
 1. dans le projet `spring-petclinic-customers-service` ajouter le service discovery
-2. dans le projet `spring-petclinic-customers-service` ajouter l'enregistrement dans springboot admin
-3. dans le projet `spring-petclinic-customers-service` copier la class `Visit`  du projet `spring-petclinic-visits-service`
-4. dans le projet `spring-petclinic-customers-service` ajouter la dependance `ribbon` 
+2. dans le projet `spring-petclinic-visits-service` corriger la configuration consul pour permettre d'avoir une instance unique pour chaque lancement
+   ```yaml
+   spring:
+      cloud:
+         consul:
+            host: localhost
+            port: 8500
+            discovery:
+            instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+         config:
+            fail-fast: true
+      application:
+         name: petclinic-visits
+   ```
+3. lancer deux instances de `spring-petclinic-visits-service`. Vous devriez avoir :
+   ![Multiple instances de visit](./instances%20visit.png)
+4. dans le projet `spring-petclinic-customers-service` ajouter l'enregistrement dans springboot admin
+5. dans le projet `spring-petclinic-customers-service` copier la class `Visit`  du projet `spring-petclinic-visits-service`
+6. dans le projet `spring-petclinic-customers-service` desactiver le test `shouldGetAPetInJSonFormat` de la classe `PetResourceTest`
+7. dans le projet `spring-petclinic-customers-service` ajouter la dependance `ribbon` 
    ```xml
    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
    </dependency>
    ```
-5. dans le projet `spring-petclinic-customers-service`, le service `@GetMapping("owners/*/pets/{petId}")` appeler le service `@GetMapping("owners/*/pets/{petId}/visits")` qui se trouve dans le projet `spring-petclinic-visits-service`
-6. dans le projet 
+8. dans le projet `spring-petclinic-customers-service` supprimer les dependances :
+   - spring-cloud-sleuth-zipkin
+   - spring-cloud-starter-config
+   - spring-cloud-sleuth-zipkin
+9.  dans le projet `spring-petclinic-customers-service`, le service `@GetMapping("owners/*/pets/{petId}")` doit appeler le service `@GetMapping("owners/*/pets/{petId}/visits")` qui se trouve dans le projet `spring-petclinic-visits-service`
+10. dans le projet `spring-petclinic-customers-service` et dans le fichier `application.properties` mettre 
+   ```properties
+   spring.datasource.initialization-mode=always
+   spring.datasource.platform=hsqldb
 
-   ```java
-   @LoadBalanced
-   @Bean
-   public RestTemplate loadbalancedRestTemplate() {
-      new RestTemplate();
-   }
+   spring.jpa.hibernate.ddl-auto=none
+   spring.jpa.show-sql=true
+   spring.jpa.properties.hibernate.format_sql=true
+
+   petclinic.database=hsqldb
+   spring.datasource.schema=classpath*:db/${petclinic.database}/schema.sql
+   spring.datasource.data=classpath*:db/${petclinic.database}/data.sql
    ```
+11. dans le projet `spring-petclinic-customers-service` et la classe `CustomersServiceApplication` ajouter
+   ```java
+	@LoadBalanced
+	@Bean
+	public RestTemplate loadbalancedRestTemplate() {
+	  	return new RestTemplate();
+	}
+   ```
+   attention, gerer les imports
 
-7. dans la classe `PetResource` ajouter le chargement du nouveau restTemplate,
+9. dans la classe `PetResource` ajouter le chargement du nouveau restTemplate,
    ```java
    @Autowired
    RestTemplate restTemplate;
 
-
    public PetDetails findPet(@PathVariable("petId") int petId) {
       
-      List<Visit> visits =  this.restTemplate.getForObject("https://petclinic-visits/owners/*/pets/" + petId, String.class);
+      List<Visit> visits =  this.restTemplate.getForObject("http://petclinic-visits/owners/*/pets/" + petId + "/visits", List.class);
 
       return new PetDetails(findPetById(petId), visits);
    }
    ```
+10. recompiler le tous et lancer le jar `spring-petclinic-customers-service`
+11. tester l'appel `http://[host]:[port]/owners/*/pets/8`, normalement vous avez le resultat :
+    ```json
+    {"visits":[{"id":2,"date":"2013-01-01","description":"rabies shot","petId":8},{"id":3,"date":"2013-01-02","description":"neutered","petId":8}],"id":8,"name":"Max","owner":"Jean Coleman","birthDate":"2012-09-04","type":{"id":1,"name":"cat"}}
+    ```
+    Lancer plusieurs tests permet de voir les différentes requetes hibernate passer sur chacun des services `visit`
+
+### Version en mode programmatique :
+
+1. dans la classe `PetResource` ajouter le chargement du nouveau restTemplate,
+   ```java
+	@Autowired
+	private LoadBalancerClient loadBalancer;
+
+   public PetDetails findPet(@PathVariable("petId") int petId) {
+
+      String uri = loadBalancer.choose("petclinic-visits").getUri().toString();
+      List<Visit> visits =  new RestTemplate().getForObject( uri + "/owners/*/pets/" + petId + "/visits", List.class);
+
+      return new PetDetails(findPetById(petId), visits);
+   }
+   ```
+2. recompiler le tous et lancer le jar `spring-petclinic-customers-service`

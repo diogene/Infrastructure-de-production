@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.visits.model;
+package org.springframework.samples.petclinic.customers.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,28 +28,20 @@ import lombok.NoArgsConstructor;
  * @author Ken Krebs
  * @author Maciej Szarlinski
  */
-@Entity
-@Table(name = "visits")
 @Builder(builderMethodName = "visit")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Visit {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Builder.Default
-    @Column(name = "visit_date")
-    @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date date = new Date();
 
     @Size(max = 8192)
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "pet_id")
     private int petId;
 
     public Integer getId() {

@@ -6,4 +6,3 @@ spring:
     data: classpath*:db/hsqldb/data.sql
 
 logging.level.org.springframework: INFO
-

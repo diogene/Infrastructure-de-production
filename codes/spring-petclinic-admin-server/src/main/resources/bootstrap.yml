@@ -5,9 +5,9 @@ spring:
       port: 8500
       discovery:
         instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-      config:
-        enabled: true
-        fail-fast: true
-        format: yaml
+    config:
+      enabled: true
+      fail-fast: true
+      format: yaml
   application:
     name: petclinic-admin

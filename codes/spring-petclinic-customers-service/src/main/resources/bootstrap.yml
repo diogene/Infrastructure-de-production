@@ -1,12 +1,11 @@
 spring:
   cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
     config:
-      uri: http://localhost:8888
+      fail-fast: true
   application:
     name: customers-service
----
-spring:
-  profiles: docker
-  cloud:
-    config:
-      uri: http://config-server:8888
