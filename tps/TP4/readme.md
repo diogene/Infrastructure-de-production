@@ -72,9 +72,9 @@ pour vous aider : https://jmeter.apache.org/usermanual/jmeter_proxy_step_by_step
    ![configuration du proxy navigateur](./image2018-10-9%2016_54_26.png)  
 4. Ensuite il faut jouer le scénario pour enregistrer toutes les pages
 5. Variabiliser le nom du propriétaire ( ${__RandomString(10,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,)} )
-   ![valoration des variables](./image2017-10-8%2015_5_36.png)
+   ![valoration des variables](./extraireIdentifiant.png)
 6. Extraire l'identifiant du nouveau propriétaire
-   ![ Extraire les identifiants](./image2017-10-8%2015_13_40.png)
+   ![ Extraire les identifiants](./extraireIdentifiant2.png)
 7. Lancer un tir de performances
    ![parametres de lancement](./paramLancement.png)
 8. Lancer un premier tir avec 50 itération et un second en infini
