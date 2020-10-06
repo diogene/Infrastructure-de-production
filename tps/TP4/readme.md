@@ -6,7 +6,7 @@ L’objectif de ce TP est d'effectuer un test de performance (robustesse) et de 
 ## Les éléments de notation
 
 * fichier de configuration, a mettre dans votre repository git
-* Réponse au [qcm](https://docs.google.com/forms/d/1qWzqM2oUiqYcAt3YHMw7-SLUKEKG14GWIxlhrMYrOgI)
+* Réponse au [qcm](https://docs.google.com/forms/d/11AR2u_pmATVlzOvOcdh_lP7Yx-S0ORKtD9p21kLYIJQ)
 
 ## Préparation du test de performance
 ### Installation
@@ -43,7 +43,7 @@ sous linux,
 2. lancer la machine docker, les éléments de lancement sont :
    1. `JAVA_OPTS="-Xmx64M -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/tomcat/temp"`
    2. `CATALINA_OPTS="-Dcom.sun.management.jmxremote.port=8090 -Dcom.sun.management.jmxremote.rmi.port=8091 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Djava.rmi.server.hostname=[mettre l'ip du host docker]"`
-   3. utiliser le war fourni
+   3. utiliser le [war](https://github.com/diogene/Infrastructure-de-production/blob/master/tps/TP4/petclinic.war) fourni
    4. Le tomcat est installé dans `/usr/local/tomcat`
 
 ### Visualiser la mémoire et le garbage collector
