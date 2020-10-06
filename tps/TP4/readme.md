@@ -20,7 +20,7 @@ Pour réaliser ce test il faut :
 
 Pour le diagnostic les outils nécessaires sont :
 
-1. une machine virtuel java, presque tous les outils sont fourni avec
+1. une jdk, presque tous les outils sont fourni avec
 2. Des plugins pour [VisualVM](https://visualvm.github.io/download.html) (Tools > plugins)
     ![liste des plugins](./image2017-10-8%2010_51_41.png)
 3. Installer les plugins visualGC, ThreadInspector, Tracer monitor probes
@@ -30,12 +30,13 @@ Pour le diagnostic les outils nécessaires sont :
 
 Il y a deux possibilités pour réaliser le test de performance. La première possibilitée est de tous faire dans windows avec un tomcat installé en local et jmeter aussi. La seconde est d'utiliser linux.
 
-1. Installer tomcat et télécharger le war (petclinic.war) et installé le dans le répertoire webapps
+1. Installer tomcat et télécharger le war [petclinic.war](https://github.com/diogene/Infrastructure-de-production/blob/master/tps/TP4/petclinic.war) et installé le dans le répertoire webapps
 2. Vérifier la quantité de mémoire (-Xms, -Xmx) alloué pour le processus java dans le fichier catalina (variable `JAVA_OPTS` ou `CATALINA_OPTS` et mettre -Xmx64m) et mettre le dump memoire lors du out of memoty (`-XX:+HeapDumpOnOutOfMemoryError` `-XX:HeapDumpPath=/tmp/dump`)
 3. Démarrer l'application
 
-sous linux,
+sous linux et machine université,
 
+1. docker est obligatoire car pour faire un heapdump il faut des droits root. 
 1. Installer l'image tomcat car elle est foruni avec la jdk et non la jre comme les images officielles :
    ```bash
    docker pull tomcat:8.5-jdk8-slim
