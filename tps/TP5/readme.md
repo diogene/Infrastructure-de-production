@@ -166,11 +166,11 @@ Il est aussi possible de démarrer cerebro directement depuis votre poste.
 
 l'objectif de cette section est de mettre en forme les données pour qu'les puissent etre utilisable dans elastic
 
-* Créer un fichier de configuration (logstash.conf) dans le répertoire conf
+* Créer un fichier de configuration (`vente.conf`) dans le répertoire conf
 * Copier le fichier d'information de géolocalisation dans le répertoire conf
 * Créer un répertoire patterns dans la conf
 
-* Ajouter une entrée dans logstash.conf
+* Ajouter une entrée dans `vente.conf`
   ```
     input {
         tcp {
@@ -178,13 +178,13 @@ l'objectif de cette section est de mettre en forme les données pour qu'les puis
         }
     }
   ```
-* ajouter la zone de filtre dans logstash.conf
+* ajouter la zone de filtre dans `vente.conf`
   ```
     filter {
      
     }
   ```
-* configurer la sortie vers ES dans logstash.conf
+* configurer la sortie vers ES dans `vente.conf`
   ```
     output {
         elasticsearch {
