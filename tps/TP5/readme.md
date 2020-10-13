@@ -36,6 +36,8 @@ L'arborescence à mettre en œuvre pour ce TP :
 
 ![arboresence](arboresence.png)
 
+le `docker-compose.yml` est au meme niveau que les répertoires
+
 Pour tous vos travaux vous utiliserez les liens (link) pour autoriser les communications entre les différents containers. le demarrage de l'infrastructure est fait via les docker-compose
 
 La partie du docker compose pour lancer elasticsearch est :
