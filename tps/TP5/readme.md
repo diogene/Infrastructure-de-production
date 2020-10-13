@@ -34,7 +34,7 @@ Le générateur de log et les données de géolocalisation sont issus d'un works
 
 L'arborescence à mettre en œuvre pour ce TP :
 
-![arboresence](image2019-10-15_14-59-1.png)
+![arboresence](arboresence.png)
 
 Pour tous vos travaux vous utiliserez les liens (link) pour autoriser les communications entre les différents containers. le demarrage de l'infrastructure est fait via les docker-compose
 
