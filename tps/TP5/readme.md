@@ -149,7 +149,7 @@ Démarrage de cerebro :
 
 ```yml
   cerebro:
-      image: openjdk:8-alpine
+      image: openjdk:8-jre
       volumes:
           - c:/Users/dioge/OneDrive/Documents/personnel/cours/cours/TP5/cerebro:/usr/src/cerebro:ro
       links:
