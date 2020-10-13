@@ -207,7 +207,7 @@ l'objectif de cette section est de mettre en forme les données pour qu'les puis
         Number of threads to use
         Default: 1
     
-    java -jar log-generator.jar -n 5000 -r 1500 | nc 192.168.0.12 5000
+    java -jar log-generator.jar -n 5000 -r 1500 | nc [IP du conteneur docker] 5000
     ```
     sous Windows il est possible de lancer [netcat-win32](https://eternallybored.org/misc/netcat/netcat-win32-1.11.zip)
     ```̀bash
