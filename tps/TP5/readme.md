@@ -56,16 +56,15 @@ La partie du docker compose pour lancer elasticsearch est :
       ports:
           - 9200:9200
           - 9300:9300
-      networks:
-          - esnet
 ``` 
-> :no_entry_sign: ici `esdata1` est un volume docker (un volume docker est un espace de stockage docker qui peut être attaché a plusieurs containers)
+> :no_entry_sign: ici `esdata1` est un volume docker (un volume docker est un espace de stockage docker qui peut être attaché a plusieurs containers). Pour le créer il faut lancer la commande `docker volume create esdata1`
 
-la création du volume :
+la spécification du volume :
 ```yml
 volumes: 
   esdata1:
 ```
+
 > :no_entry_sign: Il y a plusieurs facon de traiter le problème de d'accès réseau entre les containers. soit en créant un réseau virtuel soit en faisant des références (link) entre chaque container
 
 La création d'un network :
@@ -74,7 +73,6 @@ networks:
   esnet:
 ```
 Il suffit ansi d'y faire référence dans la déclaration des servies comme pour elastic
-
 
 Démarrer logstash :
 
@@ -88,7 +86,6 @@ Démarrer logstash :
       links:
           - elasticsearch:elasticsearch
       volumes:
-          - c:/Users/dioge/OneDrive/Documents/personnel/cours/cours/TP5/logstash/conf/pipeline/:/usr/share/logstash/pipeline/
           - c:/Users/dioge/OneDrive/Documents/personnel/cours/cours/TP5/logstash/conf/:/usr/share/logstash/config/ 
       command: logstash -f config/ventes.conf --verbose --log.level debug --config.reload.automatic
 ```
@@ -170,23 +167,10 @@ l'objectif de cette section est de mettre en forme les données pour qu'les puis
 * Copier le fichier d'information de géolocalisation dans le répertoire conf
 * Créer un répertoire patterns dans la conf
 
-* Ajouter une entrée dans `vente.conf`
-  ```
-    input {
-        tcp {
-            port => 5000
-        }
-    }
-  ```
-* ajouter la zone de filtre dans `vente.conf`
-  ```
-    filter {
-     
-    }
-  ```
 * configurer la sortie vers ES dans `vente.conf`
   ```
     output {
+        stdout {  codec => rubydebug{metadata =>  true }  }
         elasticsearch {
             hosts => "elasticsearch:9200"
         }
@@ -207,21 +191,28 @@ l'objectif de cette section est de mettre en forme les données pour qu'les puis
         Number of threads to use
         Default: 1
     
-    java -jar log-generator.jar -n 5000 -r 1500 | nc [IP du conteneur docker] 5000
+    java -jar log-generator.jar -n 5000 -r 1500 
     ```
-    sous Windows il est possible de lancer [netcat-win32](https://eternallybored.org/misc/netcat/netcat-win32-1.11.zip)
-    ```̀bash
-    java -jar log-generator.jar -n 500 -r 1500 | netcat-1.11\nc64 192.168.0.12 5000
-    ```
-    Le log généré est 
-
+    
+    La log généré est 
+    
     ```bash
     11-11-2016 16:28:24.508 [pool-1-thread-1] INFO com.github.vspiewak.loggenerator.SearchRequest - id=27,ip=90.84.144.93,category=Portable,brand=Apple
     11-11-2016 16:28:24.525 [pool-1-thread-1] INFO com.github.vspiewak.loggenerator.SellRequest - id=28,ip=92.90.16.190,email=client29@gmail.com,sex=M,brand=Apple,name=iPhone 5C,model=iPhone 5C - Jaune - Disque 32Go,category=Mobile,color=Jaune,options=Disque 32Go,price=699.0
     11-11-2016 16:28:24.540 [pool-1-thread-1] INFO com.github.vspiewak.loggenerator.SearchRequest - id=29,ip=93.31.186.100,category=Portable
     11-11-2016 16:28:24.549 [pool-1-thread-1] INFO com.github.vspiewak.loggenerator.SearchRequest - id=30,ip=109.211.12.248,category=Baladeur,brand=Apple,color=Argent,options=Disque 16Go
     11-11-2016 16:28:24.557 [pool-1-thread-1] INFO com.github.vspiewak.loggenerator.SellRequest - id=31,ip=86.73.160.167,email=client32@gmail.com,sex=M,brand=Apple,name=iPad mini,model=iPad mini - Blanc,category=Tablette,color
-```
+    ```
+    L'objectif est de rediriger cette sortie console vers elastic. netcat (`nc`) permet de realiser cette redirection
+    
+    ```bash
+    java -jar log-generator.jar -n 5000 -r 1500 | nc [IP du conteneur docker] 5000
+    ```
+    
+    sous Windows il est possible de lancer [netcat-win32](https://eternallybored.org/misc/netcat/netcat-win32-1.11.zip)
+    ```̀bash
+    java -jar log-generator.jar -n 500 -r 1500 | netcat-1.11\nc64 192.168.0.12 5000
+    ```
 
 * Consulter les logs générés sous kibana (http://192.168.0.12:5601/)
   la forme doit être du type
