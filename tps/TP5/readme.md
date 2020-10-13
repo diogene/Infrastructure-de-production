@@ -54,7 +54,25 @@ La partie du docker compose pour lancer elasticsearch est :
       ports:
           - 9200:9200
           - 9300:9300
+      networks:
+          - esnet
+``` 
+> :no_entry_sign: ici `esdata1` est un volume docker (un volume docker est un espace de stockage docker qui peut être attaché a plusieurs containers)
+
+la création du volume :
+```yml
+volumes: 
+  esdata1:
 ```
+> :no_entry_sign: Il y a plusieurs facon de traiter le problème de d'accès réseau entre les containers. soit en créant un réseau virtuel soit en faisant des références (link) entre chaque container
+
+La création d'un network :
+```yml
+networks:
+  esnet:
+```
+Il suffit ansi d'y faire référence dans la déclaration des servies comme pour elastic
+
 
 Démarrer logstash :
 
@@ -137,7 +155,6 @@ Démarrage de cerebro :
       ports:
       - "9000:9000"
       command: "/bin/sh -c 'cp -r /usr/src/cerebro/cerebro-0.7.0.tgz /tmp/cerebro-0.7.0.tgz; tar -xvf /tmp/cerebro-0.7.0.tgz; /cerebro-0.7.0/bin/cerebro '"
-      
 ```
 
 Il est aussi possible de démarrer cerebro directement depuis votre poste.
