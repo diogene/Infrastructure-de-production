@@ -6,7 +6,7 @@ L’objectif de ce TP est de mettre en place une infrastructure pour suivre en t
 ## Les éléments de notation
 
 * fichier de configuration, a mettre dans votre repository git
-* Réponse au [qcm](https://docs.google.com/forms/d/11AR2u_pmATVlzOvOcdh_lP7Yx-S0ORKtD9p21kLYIJQ)
+* Réponse au [qcm](https://docs.google.com/forms/d/1c24_4PY3PSN5ff11EMQflXt3S3Xwi_MSVbeTVlC92fM)
 
 ## Préparation du test de performance
 ### Installation
