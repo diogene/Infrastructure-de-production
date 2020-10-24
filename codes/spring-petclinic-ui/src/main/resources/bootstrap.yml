@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: petclinic-ui
+management:
+  endpoint:
+    restart:
+      enabled: true
