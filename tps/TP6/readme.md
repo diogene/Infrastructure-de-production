@@ -18,22 +18,14 @@ L’objectif de ce TP est d'installer et d'utiliser les outils de monitoring sur
 cAdvisor est un outil de monitoring des containers docker. Il se lance lui même dans un container.
 
   ```bash
-docker run                                      \
-  --volume=/:/rootfs:ro                         \
-  --volume=/var/run:/var/run:rw                 \
-  --volume=/sys:/sys:ro                         \
-  --volume=/var/lib/docker/:/var/lib/docker:ro  \
-  --publish=8080:8080                           \
-  --detach=true                                 \
-  --name=cadvisor                               \
-  google/cadvisor-canary:latest
+    docker run --publish=8080:8080 --detach=true --name=cadvisor  google/cadvisor-canary:latest
   ```
 
 Selon les systèmes les volumes peuvent ne pas être montés. Une fois le container démarrer il est testable a l'adresse : http://<votre ip>:8080 :
 
 ![tableau de bord cadvisor](cadvisor.png)
 
-### Monitoring système
+### Monitoring système linux
 
 [container-exporter](https://github.com/prometheus/node_exporter)
 
@@ -52,6 +44,19 @@ quay.io/prometheus/node-exporter                                     \
 Une fois le container démarrer il est testable a l'adresse : http://<votre ip>:9100/metrics :
 
 ![metriques exportées](image2019-11-5_15-2-image2019-11-5_15-2-51.png)
+
+### monitoring systems windows
+
+[windows_exporter}(https://github.com/prometheus-community/windows_exporter)
+
+télécharger la dernière [release] (https://github.com/prometheus-community/windows_exporter/releases/download/v0.14.0/windows_exporter-0.14.0-386.exe)
+
+le lancement :
+```bash 
+.\windows_exporter-0.14.0-386.exe
+```
+
+les métriques prometheus sont disponible a l'adresse http://<votre ip>:9182/metrics
 
 ### Monitoring applicatif
 
@@ -101,7 +106,7 @@ les éléments pour lancer l'application petclinic en docker est :
 Port exposé : 8888
 nom du container : springboot
 nom de l'image : openjdk. par defaut c'est l'image latest qui est chargé
-ligne de commande de lancement : bash -c 'java -jar /usr/share/petclinic/spring-petclinic-vets-service-2.0.4.jar --server.port=8888'
+ligne de commande de lancement : bash -c bash -c 'java -jar /usr/share/petclinic/spring-petclinic-vets-service-2.0.4.jar --server.port=8888'
 ```
 si tout s'est bien passé vous devez voir la ligne :
 
@@ -109,7 +114,7 @@ si tout s'est bien passé vous devez voir la ligne :
 2019-11-05 13:54:39.273  INFO 1 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 17 endpoint(s) beneath base path '/actuator'
 ```
 
-Il n'y a plus qu'a tester sur l'adresse : http://<votre ip>:8888/manage/prometheus
+Il n'y a plus qu'a tester sur l'adresse : http://<votre ip>:8888/actuator/prometheus
 ![export prometheus](image2019-11-5_15-2-image2019-11-5_15-2-22.png)
 
 ### Agrégateur de metrics
@@ -119,46 +124,47 @@ Maintenant il faut démarre le serveur Prometheus lui même. pour cela il faut d
 1. Utiliser le container cadvisor car il export plus de variable sur le fonctionnement de docker
 2. création du fichier de configuration prometheus.yml :
    ```yml
-   # my global config
+    # my global config
     global:
-    scrape_interval:     15s # By default, scrape targets every 15 seconds.
-    evaluation_interval: 10s # By default, scrape targets every 15 seconds.
-    # scrape_timeout is set to the global default (10s).
-    
-    # Attach these labels to any time series or alerts when communicating with
-    # external systems (federation, remote storage, Alertmanager).
-    external_labels:
-        monitor: 'exporter-metrics'
-    
+        scrape_interval:     15s # By default, scrape targets every 15 seconds.
+        evaluation_interval: 10s # By default, scrape targets every 15 seconds.
+        # scrape_timeout is set to the global default (10s).
+
+        # Attach these labels to any time series or alerts when communicating with
+        # external systems (federation, remote storage, Alertmanager).
+        external_labels:
+            monitor: 'exporter-metrics'
+
     rule_files:
-    
+
     # A scrape configuration containing exactly one endpoint to scrape:
     # Here it's Prometheus itself.
     scrape_configs:
-    - job_name: 'cadvisor'
+        - job_name: 'cadvisor'
         scrape_interval: 5s
         static_configs:
         - targets: ['cadvisor:8080']
-    
-    - job_name: 'prometheus'
+
+        - job_name: 'prometheus'
         scrape_interval: 10s
         static_configs:
         - targets: ['localhost:9090']
-    
-    - job_name: 'spring-boot'
+
+        - job_name: 'spring-boot'
         scrape_interval: 10s
-        metrics_path: /manage/prometheus
+        metrics_path: /actuator/prometheus
         static_configs:
         - targets: ['springboot:8888']
-    
-    - job_name: 'node-exporter'
+
+        - job_name: 'node-exporter'
         scrape_interval: 10s
         static_configs:
-        - targets: ['node-exporter:9100']
+        - targets: ['node-exporter:9182']
     ```
     Ce fichier a deux sections : global et job. la premier définie la configuration générale comme les intervalles de collecte et le second tous les jobs de collecte.
 
-    > :exclamation: Les valeurs dans target ne sont pas a modifier
+    > :exclamation: Les valeurs dans target ne sont pas a modifier, sauf pour les personnes sous windows car l'exporter fonctionne sur le host et non dans un container
+    
     > :information_source: Les metrics_path peuvent ne pas être les bons
 
 3. Avant de demarrer prometheus il faut créer un volume pour stocker les données
@@ -167,16 +173,12 @@ Maintenant il faut démarre le serveur Prometheus lui même. pour cela il faut d
     ```
 4. Démarrage 
    ```bash
-    docker run -it --publish=9090:9090                                      \
-    -v prometheus_data:/prometheus                                       \
-    -v /home/etud/diogene.moulron/prometheus:/etc/prometheus             \
-            -e "-config.file=/etc/prometheus/prometheus.yml"              \
-            -e "-storage.local.path=/prometheus"                          \
-            -e "-web.console.libraries=/etc/prometheus/console_libraries" \
-            -e "-web.console.templates=/etc/prometheus/consoles"          \
-            -e "-storage.local.target-heap-size=1073741824"               \
-            -e "-storage.local.retention=200h"                            \
-        prom/prometheus
+    docker run -it --publish=9090:9090                                  \
+    -v prometheus_data:/prometheus                                      \
+    -v /home/etud/diogene.moulron/prometheus:/etc/prometheus            \
+    prom/prometheus                                                     \
+         --config.file=/etc/prometheus/prometheus.yml                   \
+         --storage.tsdb.path=/prometheus
     ```
     Dans cette ligne de commande il manque des informations pour faire fonctionner correctement prometheus
 
@@ -187,7 +189,7 @@ Maintenant il faut démarre le serveur Prometheus lui même. pour cela il faut d
 
 1. Creation du volume de données
    ```bash
-    docker volume create prometheus_data
+    docker volume create grafana_data
     ```
 
 2. Installer grafana dans docker avec les fichiers [grafana.tar.gz](grafana.tar.gz)
