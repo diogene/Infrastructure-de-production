@@ -15,19 +15,27 @@
  */
 package org.springframework.samples.petclinic.customers.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.customers.model.*;
-import org.springframework.samples.petclinic.visits.model.Visit;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.http.HttpStatus;
+import org.springframework.samples.petclinic.customers.model.Owner;
+import org.springframework.samples.petclinic.customers.model.OwnerRepository;
+import org.springframework.samples.petclinic.customers.model.Pet;
+import org.springframework.samples.petclinic.customers.model.PetRepository;
+import org.springframework.samples.petclinic.customers.model.PetType;
+import org.springframework.samples.petclinic.visits.model.Visit;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author Juergen Hoeller
@@ -36,45 +44,52 @@ import java.util.Optional;
  * @author Maciej Szarlinski
  */
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 class PetResource {
 
-    @Autowired
-    private RestTemplate restTemplate;
-    
-	@Autowired
-    private LoadBalancerClient loadBalancer;
-    
+    private final RestTemplate restTemplate;
+
+    private final LoadBalancerClient loadBalancer;
+
+    private static final Logger log = LoggerFactory.getLogger(PetResource.class);
+
     private final PetRepository petRepository;
 
     private final OwnerRepository ownerRepository;
 
+    public PetResource(final RestTemplate restTemplate, final LoadBalancerClient loadBalancer, final PetRepository petRepository, final OwnerRepository ownerRepository)
+    {
+        super();
+        this.restTemplate = restTemplate;
+        this.loadBalancer = loadBalancer;
+        this.petRepository = petRepository;
+        this.ownerRepository = ownerRepository;
+    }
+
     @GetMapping("/petTypes")
     public List<PetType> getPetTypes() {
-        return petRepository.findPetTypes();
+        return this.petRepository.findPetTypes();
     }
 
     @PostMapping("/owners/{ownerId}/pets")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void processCreationForm(
-        @RequestBody PetRequest petRequest,
-        @PathVariable("ownerId") int ownerId) {
+        @RequestBody final PetRequest petRequest,
+        @PathVariable("ownerId") final int ownerId) {
 
         final Pet pet = new Pet();
-        final Optional<Owner> optionalOwner = ownerRepository.findById(ownerId);
-        Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
+        final Optional<Owner> optionalOwner = this.ownerRepository.findById(ownerId);
+        final Owner owner = optionalOwner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         owner.addPet(pet);
 
-        save(pet, petRequest);
+        this.save(pet, petRequest);
     }
 
     @PutMapping("/owners/*/pets/{petId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void processUpdateForm(@RequestBody PetRequest petRequest) {
-        int petId = petRequest.getId();
-        Pet pet = findPetById(petId);
-        save(pet, petRequest);
+    public void processUpdateForm(@RequestBody final PetRequest petRequest) {
+        final int petId = petRequest.getId();
+        final Pet pet = this.findPetById(petId);
+        this.save(pet, petRequest);
     }
 
     private void save(final Pet pet, final PetRequest petRequest) {
@@ -82,24 +97,24 @@ class PetResource {
         pet.setName(petRequest.getName());
         pet.setBirthDate(petRequest.getBirthDate());
 
-        petRepository.findPetTypeById(petRequest.getTypeId())
+        this.petRepository.findPetTypeById(petRequest.getTypeId())
             .ifPresent(pet::setType);
 
-        log.info("Saving pet {}", pet);
-        petRepository.save(pet);
+        PetResource.log.info("Saving pet {}", pet);
+        this.petRepository.save(pet);
     }
 
     @GetMapping("owners/*/pets/{petId}")
-    public PetDetails findPet(@PathVariable("petId") int petId) {
-        String uri = loadBalancer.choose("petclinic-visits").getUri().toString();
-        List<Visit> visits =  restTemplate.getForObject( uri + "/owners/*/pets/" + petId + "/visits", List.class);
-  
-        return new PetDetails(findPetById(petId), visits);
+    public PetDetails findPet(@PathVariable("petId") final int petId) {
+        final String uri = this.loadBalancer.choose("petclinic-visits").getUri().toString();
+        final List<Visit> visits =  this.restTemplate.getForObject( uri + "/owners/*/pets/" + petId + "/visits", List.class);
+
+        return new PetDetails(this.findPetById(petId), visits);
     }
 
 
-    private Pet findPetById(int petId) {
-        Optional<Pet> pet = petRepository.findById(petId);
+    private Pet findPetById(final int petId) {
+        final Optional<Pet> pet = this.petRepository.findById(petId);
         if (!pet.isPresent()) {
             throw new ResourceNotFoundException("Pet "+petId+" not found");
         }

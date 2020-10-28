@@ -1,6 +1,7 @@
 spring:
   cloud:
     consul:
+      enabled: true
       host: localhost
       port: 8500
       discovery:
@@ -9,5 +10,26 @@ spring:
         enabled: true
         fail-fast: true
         format: yaml
+    discovery:
+      enabled: false
+    bus:
+      enabled: false
   application:
-    name: petclinic-vets
+    name: vets-service
+   
+---
+spring:
+  profiles: simple
+  cloud:
+    consul:
+      enabled: false
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+    discovery:
+      enabled: false
+    bus:
+      enabled: false
+  application:
+    name: vets-service

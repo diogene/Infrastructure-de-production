@@ -15,8 +15,6 @@
  */
 package org.springframework.samples.petclinic.customers.web;
 
-import lombok.Data;
-
 import java.util.Date;
 import java.util.List;
 
@@ -28,23 +26,22 @@ import org.springframework.samples.petclinic.visits.model.Visit;
 /**
  * @author mszarlinski@bravurasolutions.com on 2016-12-05.
  */
-@Data
 class PetDetails {
 
-    private List<Visit> visits;
+    private final List<Visit> visits;
 
-    private long id;
+    private final long id;
 
-    private String name;
+    private final String name;
 
-    private String owner;
+    private final String owner;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDate;
+    private final Date birthDate;
 
-    private PetType type;
+    private final PetType type;
 
-    PetDetails(Pet pet, List<Visit> visits) {
+    PetDetails(final Pet pet, final List<Visit> visits) {
         this.id = pet.getId();
         this.name = pet.getName();
         this.owner = pet.getOwner().getFirstName() + " " + pet.getOwner().getLastName();
@@ -52,4 +49,36 @@ class PetDetails {
         this.type = pet.getType();
         this.visits = visits;
     }
+
+    public List<Visit> getVisits()
+    {
+        return this.visits;
+    }
+
+    public long getId()
+    {
+        return this.id;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public String getOwner()
+    {
+        return this.owner;
+    }
+
+    public Date getBirthDate()
+    {
+        return this.birthDate;
+    }
+
+    public PetType getType()
+    {
+        return this.type;
+    }
+
 }
+

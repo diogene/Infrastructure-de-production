@@ -21,10 +21,10 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @EnableWebFluxSecurity
-public class InsecurityConfiguration {
+public class InsecurityWebfluxConfiguration {
     //@formatter:off
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain springSecurityFilterChain(final ServerHttpSecurity http) {
     	return http
                 .authorizeExchange().anyExchange().permitAll()
                 .and()

@@ -18,6 +18,7 @@ package org.springframework.samples.petclinic.api;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -31,10 +32,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 /**
  * @author Maciej Szarlinski
  */
+@EnableDiscoveryClient
 @SpringBootApplication
 public class ApiGatewayApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
     }
 
@@ -47,9 +49,9 @@ public class ApiGatewayApplication {
      */
     @Bean
     RouterFunction<?> routerFunction() {
-        RouterFunction<ServerResponse> router = RouterFunctions.resources("/**", new ClassPathResource("static/"))
+        final RouterFunction<ServerResponse> router = RouterFunctions.resources("/**", new ClassPathResource("static/"))
             .andRoute(RequestPredicates.GET("/"),
-                request -> ServerResponse.ok().contentType(MediaType.TEXT_HTML).syncBody(indexHtml));
+                request -> ServerResponse.ok().contentType(MediaType.TEXT_HTML).syncBody(this.indexHtml));
         return router;
     }
 

@@ -16,10 +16,11 @@
 package org.springframework.samples.petclinic.visits.web;
 
 import java.util.List;
+
 import javax.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.visits.model.Visit;
 import org.springframework.samples.petclinic.visits.model.VisitRepository;
@@ -39,36 +40,48 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Maciej Szarlinski
  */
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 class VisitResource {
 
     private final VisitRepository visitRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(VisitResource.class);
+
+    public VisitResource(final VisitRepository visitRepository)
+    {
+        super();
+        this.visitRepository = visitRepository;
+    }
+
     @PostMapping("owners/*/pets/{petId}/visits")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void create(
-        @Valid @RequestBody Visit visit,
-        @PathVariable("petId") int petId) {
+        @Valid @RequestBody final Visit visit,
+        @PathVariable("petId") final int petId) {
 
         visit.setPetId(petId);
-        log.info("Saving visit {}", visit);
-        visitRepository.save(visit);
+        VisitResource.log.info("Saving visit {}", visit);
+        this.visitRepository.save(visit);
     }
 
     @GetMapping("owners/*/pets/{petId}/visits")
-    List<Visit> visits(@PathVariable("petId") int petId) {
-        return visitRepository.findByPetId(petId);
+    List<Visit> visits(@PathVariable("petId") final int petId) {
+        return this.visitRepository.findByPetId(petId);
     }
 
     @GetMapping("pets/visits")
-    Visits visitsMultiGet(@RequestParam("petId") List<Integer> petIds) {
-        final List<Visit> byPetIdIn = visitRepository.findByPetIdIn(petIds);
+    Visits visitsMultiGet(@RequestParam("petId") final List<Integer> petIds) {
+        final List<Visit> byPetIdIn = this.visitRepository.findByPetIdIn(petIds);
         return new Visits(byPetIdIn);
     }
 
-    @Value
     static class Visits {
         private final List<Visit> items;
+
+        public Visits(final List<Visit> items)
+        {
+            super();
+            this.items = items;
+        }
+
     }
 }

@@ -1,0 +1,40 @@
+spring:
+  cache:
+    cache-names: vets
+  datasource:
+    initialization-mode: always
+    platform: hsqldb
+  jpa:
+    hibernate: 
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  health: 
+    db: 
+      enabled: false
+server:
+  port: 0
+
+---
+spring:
+  profiles: simple
+  cache:
+    cache-names: vets
+  datasource:
+    initialization-mode: always
+    platform: hsqldb
+  jpa:
+    hibernate: 
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+server:
+  port: ${PORT:8082}

@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    initialization-mode: always
+    platform: hsqldb
+  jpa:
+    hibernate: 
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  health: 
+    db: 
+      enabled: false
+server:
+  port: 0
+
+---
+spring:
+  profiles: simple
+  datasource:
+    initialization-mode: always
+    platform: hsqldb
+  jpa:
+    hibernate: 
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+server:
+  port: ${PORT:8083}

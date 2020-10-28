@@ -15,8 +15,6 @@
  */
 package org.springframework.samples.petclinic.vets.system;
 
-import lombok.Data;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -24,17 +22,47 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Maciej Szarlinski
  */
-@Data
 @ConfigurationProperties(prefix = "vets")
 public class VetsProperties {
 
     private Cache cache;
 
-    @Data
     public static class Cache {
 
         private int ttl;
 
         private int heapSize;
+
+        public int getTtl()
+        {
+            return this.ttl;
+        }
+
+        public void setTtl(final int ttl)
+        {
+            this.ttl = ttl;
+        }
+
+        public int getHeapSize()
+        {
+            return this.heapSize;
+        }
+
+        public void setHeapSize(final int heapSize)
+        {
+            this.heapSize = heapSize;
+        }
+
     }
+
+    public Cache getCache()
+    {
+        return this.cache;
+    }
+
+    public void setCache(final Cache cache)
+    {
+        this.cache = cache;
+    }
+
 }

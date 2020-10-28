@@ -15,16 +15,24 @@
  */
 package org.springframework.samples.petclinic.customers.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.samples.petclinic.customers.model.Owner;
 import org.springframework.samples.petclinic.customers.model.OwnerRepository;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Juergen Hoeller
@@ -35,27 +43,33 @@ import java.util.Optional;
  */
 @RequestMapping("/owners")
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 class OwnerResource {
 
     private final OwnerRepository ownerRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(OwnerResource.class);
+
+    public OwnerResource(final OwnerRepository ownerRepository)
+    {
+        super();
+        this.ownerRepository = ownerRepository;
+    }
 
     /**
      * Create Owner
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOwner(@Valid @RequestBody Owner owner) {
-        ownerRepository.save(owner);
+    public void createOwner(@Valid @RequestBody final Owner owner) {
+        this.ownerRepository.save(owner);
     }
 
     /**
      * Read single Owner
      */
     @GetMapping(value = "/{ownerId}")
-    public Optional<Owner> findOwner(@PathVariable("ownerId") int ownerId) {
-        return ownerRepository.findById(ownerId);
+    public Optional<Owner> findOwner(@PathVariable("ownerId") final int ownerId) {
+        return this.ownerRepository.findById(ownerId);
     }
 
     /**
@@ -63,15 +77,15 @@ class OwnerResource {
      */
     @GetMapping
     public List<Owner> findAll() {
-        return ownerRepository.findAll();
+        return this.ownerRepository.findAll();
     }
 
     /**
      * Update Owner
      */
     @PutMapping(value = "/{ownerId}")
-    public Owner updateOwner(@PathVariable("ownerId") int ownerId, @Valid @RequestBody Owner ownerRequest) {
-        final Optional<Owner> owner = ownerRepository.findById(ownerId);
+    public Owner updateOwner(@PathVariable("ownerId") final int ownerId, @Valid @RequestBody final Owner ownerRequest) {
+        final Optional<Owner> owner = this.ownerRepository.findById(ownerId);
 
         final Owner ownerModel = owner.orElseThrow(() -> new ResourceNotFoundException("Owner "+ownerId+" not found"));
         // This is done by hand for simplicity purpose. In a real life use-case we should consider using MapStruct.
@@ -80,7 +94,7 @@ class OwnerResource {
         ownerModel.setCity(ownerRequest.getCity());
         ownerModel.setAddress(ownerRequest.getAddress());
         ownerModel.setTelephone(ownerRequest.getTelephone());
-        log.info("Saving owner {}", ownerModel);
-        return ownerRepository.save(ownerModel);
+        OwnerResource.log.info("Saving owner {}", ownerModel);
+        return this.ownerRepository.save(ownerModel);
     }
 }

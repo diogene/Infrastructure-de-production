@@ -1,7 +1,39 @@
 spring:
+  cloud:
+    consul:
+      enabled: true
+      host: localhost
+      port: 8500
+      discovery:
+        instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+      config:
+        enabled: true
+        fail-fast: true
+        format: yaml
+    discovery:
+      enabled: false
+    bus:
+      enabled: false
   application:
     name: petclinic-ui
 management:
   endpoint:
     restart:
       enabled: true
+   
+---
+spring:
+  profiles: simple
+  cloud:
+    consul:
+      enabled: false
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+    discovery:
+      enabled: false
+    bus:
+      enabled: false
+  application:
+    name: petclinic-ui

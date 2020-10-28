@@ -15,8 +15,6 @@
  */
 package org.springframework.samples.petclinic.vets.web;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
 
 import org.springframework.samples.petclinic.vets.model.Vet;
@@ -36,19 +34,24 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/api")
 @RestController
-@RequiredArgsConstructor
 class VetResource {
 
     private final VetRepository vetRepository;
 
-    @GetMapping("/vets")
-    public List<Vet> showResourcesVetList() {
-        return vetRepository.findAll();
+    public VetResource(final VetRepository vetRepository)
+    {
+        super();
+        this.vetRepository = vetRepository;
     }
 
-    
+    @GetMapping("/vets")
+    public List<Vet> showResourcesVetList() {
+        return this.vetRepository.findAll();
+    }
+
+
     @PostMapping("/vet")
-    public Vet saveVet(@RequestBody Vet vet) {
-        return vetRepository.saveAndFlush(vet);
+    public Vet saveVet(@RequestBody final Vet vet) {
+        return this.vetRepository.saveAndFlush(vet);
     }
 }

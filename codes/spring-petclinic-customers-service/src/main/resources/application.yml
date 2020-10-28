@@ -1,0 +1,15 @@
+server:
+  port: 0
+
+logging:
+  level:
+    org:
+      springframework: DEBUG
+      
+      
+---
+spring:
+  profiles: simple
+  
+server:
+  port: ${PORT:8081}

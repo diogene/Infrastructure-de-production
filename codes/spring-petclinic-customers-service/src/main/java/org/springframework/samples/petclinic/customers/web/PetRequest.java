@@ -15,8 +15,6 @@
  */
 package org.springframework.samples.petclinic.customers.web;
 
-import lombok.Data;
-
 import java.util.Date;
 
 import javax.validation.constraints.Size;
@@ -26,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
  * @author mszarlinski@bravurasolutions.com on 2016-12-05.
  */
-@Data
 class PetRequest {
     private int id;
 
@@ -37,4 +34,45 @@ class PetRequest {
     private String name;
 
     private int typeId;
+
+    public int getId()
+    {
+        return this.id;
+    }
+
+    public void setId(final int id)
+    {
+        this.id = id;
+    }
+
+    public Date getBirthDate()
+    {
+        return this.birthDate;
+    }
+
+    public void setBirthDate(final Date birthDate)
+    {
+        this.birthDate = birthDate;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public void setName(final String name)
+    {
+        this.name = name;
+    }
+
+    public int getTypeId()
+    {
+        return this.typeId;
+    }
+
+    public void setTypeId(final int typeId)
+    {
+        this.typeId = typeId;
+    }
+
 }
