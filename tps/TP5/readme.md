@@ -61,8 +61,8 @@ La partie du docker compose pour lancer elasticsearch est :
 
 la spécification du volume :
 ```yml
-volumes: 
-  esdata1:
+volumes:
+  esdata1: {}
 ```
 
 > :no_entry_sign: Il y a plusieurs facon de traiter le problème de d'accès réseau entre les containers. soit en créant un réseau virtuel soit en faisant des références (link) entre chaque container

@@ -6,7 +6,7 @@ L’objectif de ce TP est d'installer et d'utiliser les outils de monitoring sur
 
 ## Les éléments de notation
 
-* fichier de configuration, a mettre dans votre repository git
+* fichier de configuration, et les lignes de commande a mettre dans votre repository git
 * Réponse au [qcm](https://goo.gl/forms/fIeyAOnHTP2FDA7c2)
 
 
@@ -43,7 +43,7 @@ quay.io/prometheus/node-exporter                                     \
 
 Une fois le container démarrer il est testable a l'adresse : http://<votre ip>:9100/metrics :
 
-![metriques exportées](image2019-11-5_15-2-image2019-11-5_15-2-51.png)
+![metriques exportées](./metrics%20exportees.png)
 
 ### monitoring systems windows
 
@@ -57,6 +57,8 @@ le lancement :
 ```
 
 les métriques prometheus sont disponible a l'adresse http://<votre ip>:9182/metrics
+
+![metriques exportées](./metrics%20exportees.png)
 
 ### Monitoring applicatif
 
@@ -106,7 +108,7 @@ les éléments pour lancer l'application petclinic en docker est :
 Port exposé : 8888
 nom du container : springboot
 nom de l'image : openjdk. par defaut c'est l'image latest qui est chargé
-ligne de commande de lancement : bash -c bash -c 'java -jar /usr/share/petclinic/spring-petclinic-vets-service-2.0.4.jar --server.port=8888'
+ligne de commande de lancement : bash -c bash -c 'java -jar /usr/share/petclinic/spring-petclinic-vets-service-2.0.4.jar  --spring.profiles.active=simple --server.port=8888'
 ```
 si tout s'est bien passé vous devez voir la ligne :
 
@@ -115,7 +117,7 @@ si tout s'est bien passé vous devez voir la ligne :
 ```
 
 Il n'y a plus qu'a tester sur l'adresse : http://<votre ip>:8888/actuator/prometheus
-![export prometheus](image2019-11-5_15-2-image2019-11-5_15-2-22.png)
+![export prometheus](./actuator%20prometeus.png)
 
 ### Agrégateur de metrics
 
@@ -173,17 +175,18 @@ Maintenant il faut démarre le serveur Prometheus lui même. pour cela il faut d
     ```
 4. Démarrage 
    ```bash
-    docker run -it --publish=9090:9090                                  \
-    -v prometheus_data:/prometheus                                      \
-    -v /home/etud/diogene.moulron/prometheus:/etc/prometheus            \
-    prom/prometheus                                                     \
-         --config.file=/etc/prometheus/prometheus.yml                   \
-         --storage.tsdb.path=/prometheus
+    docker run -p 9090:9090                                                                         \
+            --name prometheus                                                                       \
+            -v prometheus_data:/prometheus                                                          \
+            -v C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP6/prometheus:/etc/prometheus \ 
+            --link cadvisor:cadvisor                                                                \
+            --link springboot:springboot                                                            \
+            prom/prometheus
     ```
     Dans cette ligne de commande il manque des informations pour faire fonctionner correctement prometheus
 
 5. Pour verifier que toutes les targets sont bien pris en compte aller a  http://<votre ip>:9090/
-![tableau de borr prometheus](image2019-11-5_15-3-image2019-11-5_15-3-25.png)
+![tableau de bord prometheus](./target%20prometheus.png)
 
 ## Monitorer l'application avec Grafana
 
@@ -195,21 +198,26 @@ Maintenant il faut démarre le serveur Prometheus lui même. pour cela il faut d
 2. Installer grafana dans docker avec les fichiers [grafana.tar.gz](grafana.tar.gz)
    ```bash
     docker run -it                                                              \
-    --publish=3000:3000                                                      \
-    -v grafana_data:/var/lib/grafana                                         \
-    -v /home/etud/diogene.moulron/grafana/datasources:/etc/grafana/datasources   \
-    -v /home/etud/diogene.moulron/grafana/dashboards:/etc/grafana/dashboards     \
-    -v /home/etud/diogene.moulron/grafana/:/usr/graphana                         \
+    --publish=3000:3000                                                         \
+    --link prometheus:prometheus                                                \                                
+    -v grafana_data:/var/lib/grafana                                            \
+    -v /home/etud/diogene.moulron/grafana/datasources:/etc/grafana/datasources  \
+    -v /home/etud/diogene.moulron/grafana/dashboards:/etc/grafana/dashboards    \
+    -v /home/etud/diogene.moulron/grafana/:/usr/graphana                        \
     grafana/grafana:latest /usr/graphana/setup.sh
     l’application est disponible a l'adresse : http://<votre ip>:3000/ ; l'utilisateur par défaut est  admin:admin
     ```
 3. Ajouter une datasource
-    ![ajout datasource](Grafana - Home - Google Chrome 07_11_2016 Grafana%20-%20Home%20-%20Google%20Chrome%2007_11_2016%2015_09_28.png)
+    ![ajout datasource](add%20database.png)
 
 4. Création d'un tableau de bord sur l'utilisation des métrics
     [docker-monitor.json](docker-monitor.json)
 
 ### Grafana
+
+La création d'un dashboard possède automatiquement une visualisation, qui par defaut est de type graph.
+Il est possible de changer ce type dans la section `visualization` :
+![Changer la visualisation](changer%20la%20visualisation.png)
 
 1. Créer des tests de performances en utilisant soap-ui, téléchargeable a l'adresse : https://www.soapui.org/downloads/soapui.html. Vous devez ajouter un scénario de test sur l'url `/api/vet` pour ajouter un nouveau vétérinaire.
     ![test case soapui](image2018-11-6 image2018-11-6%2015_11_2.png)
@@ -239,15 +247,54 @@ Maintenant il faut démarre le serveur Prometheus lui même. pour cela il faut d
     le script : [Project-1-soapui-project.xml](Project-1-soapui-project.xml)
 4. Créer un dashboard avec les données de l'application
     ![tableau de bord grafana](dashboard.png)
-    1. machine_cpu_cores : nombre de cpu pour les containers
-    2. node_memory_MemTotal : mémoire total du host, node_memory_MemAvailable : mémoire disponible. Pour avoir le pourcentage de mémoire utilisé : ((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal) * 100
-        ![visualisation mémoire](meme%20dispo.png)
-        ![option de la visualisation mémoire](meme%20dispo%20option.png)
-    3. systemload_average
-    4. threads_peak
-    5. httpsessions_active
-    6. rate(container_cpu_user_seconds_total{name="springboot"}[30s]) * 100
-    7. pourcentage de mémoire utilisé avec : jvm_memory_max_bytes{area="heap"} et jvm_memory_used_bytes{area="heap"}
-    8. jvm_memory_max_bytes{area="heap"} et jvm_memory_used_bytes{area="heap"}
 
+    1. Aller dans les propriétés du tableau de bord
+    2. Ajouter des variables de selections 
+    ![Variables](variables.png)
+    
+    | Variable | Definition
+    :-------------------------:|:-------------------------:
+    | job | label_values(windows_cs_hostname, job)		
+    | instance | label_values(windows_cs_hostname{job=~"$job",hostname=~"$hostname"}, instance)	
+    | hostname | label_values(windows_cs_hostname{job=~"$job"}, hostname)	
+    | show_hostname | label_values(windows_cs_hostname{job=~"$job",instance=~"$instance"}, hostname)	
+    | container | label_values(jvm_classes_loaded_classes, instance)	
+    | pooldb | label_values(hikaricp_connections{instance="$container"}, pool)	
 
+    3. Ajouter un panel de type row 
+    ![row panel](row%20panel.png)
+    4. machine_cpu_cores : nombre de cpu pour les containers, C'est un panel de type statistique.
+    5. usage instantané du CPU : 
+    6. Usage dans le temps des CPU :
+    7. quantité max de mémoire : `windows_cs_physical_memory_bytes{job=~"$job",instance=~"$instance"}`
+    8. Mémoire utilisée : `100 - (windows_os_physical_memory_free_bytes{job=~"$job",instance=~"$instance"} / windows_cs_physical_memory_bytes{job=~"$job",instance=~"$instance"})*100`
+    Pour mettre en % la valeur : 
+    ![unité d'affichage](changer%20l'unité%20d'affichage.png)
+    9. Utilisation de la mémoire dans le temps 
+        - total : `windows_cs_physical_memory_bytes{job=~"$job",instance=~"$instance"}`
+        - libre : `windows_os_physical_memory_free_bytes{job=~"$job",instance=~"$instance"}`
+
+        | Display  |  Axe | Legend   |
+        :-------------------------:|:-------------------------:|:-------------------------:
+        ![diplay](display.png)  | ![axe](Axes.png) | ![Legend](Legend.png)
+
+    10. Creer un row `HikariCP`
+    11. ajouter la taille du pool de connection : `hikaricp_connections{instance="$container", pool="$pooldb"}`
+    12. ajouter le nombre de timeout : `hikaricp_connections_timeout_total{instance="$container", pool="$pooldb"}`
+    13. ajouter l'évolution des connections :
+        - Active : `hikaricp_connections_active{instance="$container", pool="$pooldb"}`
+        - Idle : `hikaricp_connections_idle{instance="$container", pool="$pooldb"}`
+        - Pending : `hikaricp_connections_pending{instance="$container", pool="$pooldb"}`
+
+    14. Creer un row `HTTP`
+    15. ajouter le nombre de requête : `irate(http_server_requests_seconds_sum{instance="$container", exception="None", uri!~".*actuator.*"}[5m]) / irate(http_server_requests_seconds_count{instance="$container", exception="None", uri!~".*actuator.*"}[5m])`
+
+    16. Ajouter l'utilisation de la heap : `sum(jvm_memory_used_bytes{instance="$container", area="heap"})*100/sum(jvm_memory_max_bytes{instance="$container", area="heap"})`
+    17. Ajouter l'utilisation de la non-heap : `sum(jvm_memory_used_bytes{instance="$container", area="nonheap"})*100/sum(jvm_memory_max_bytes{instance="$container", area="nonheap"})`
+    18. Ajouter le temps d'execution : `process_uptime_seconds{ instance="$container"}`
+    19. Ajouter l'heure de demarrage : `process_start_time_seconds{ instance="$container"}*1000`
+
+5. pour finir lancer le test de performance :
+    ![ecran de création performance](lancer%20perf.png)
+
+    ![le test](test%20de%20performance.png)

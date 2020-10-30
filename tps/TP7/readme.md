@@ -43,10 +43,18 @@ dans un premier temps, tous les composants vont être lancer en mode autonome, s
 ```bash
 dans le répertoire code :
 
-java -jar ./target/spring-petclinic-customers-service-2.0.4.jar  --spring.profiles.active=simple
-java -jar ./target/spring-petclinic-vets-service-2.0.4.jar  --spring.profiles.active=simple
-java -jar ./target/spring-petclinic-visits-service-2.0.4.jar  --spring.profiles.active=simple
-java -jar ./target/spring-petclinic-ui.jar  --spring.profiles.active=simple
+java -jar ./target/spring-petclinic-customers-service-2.0.4.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar 
+java -jar ./target/spring-petclinic-vets-service-2.0.4.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar
+java -jar ./target/spring-petclinic-visits-service-2.0.4.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar
+java -jar ./target/spring-petclinic-ui.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar
 ```
 
 l'application petclinc est disponible a l'adresse : 
+
+
+
+### aggregation des flux
+
+### filtre de sécurité
+
+### filtre de 
