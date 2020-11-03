@@ -1,0 +1,36 @@
+# my global config
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 10s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'exporter-metrics'
+
+rule_files:
+
+  # A scrape configuration containing exactly one endpoint to scrape:
+  # Here it's Prometheus itself.
+scrape_configs:
+    - job_name: 'cadvisor'
+      scrape_interval: 5s
+      static_configs:
+      - targets: ['cadvisor:8080']
+
+    - job_name: 'prometheus'
+      scrape_interval: 10s
+      static_configs:
+      - targets: ['localhost:9090']
+
+    - job_name: 'spring-boot'
+      scrape_interval: 10s
+      metrics_path: /actuator/prometheus
+      static_configs:
+      - targets: ['springboot:8888']
+
+    - job_name: 'node-exporter'
+      scrape_interval: 10s
+      static_configs:
+      - targets: ['192.168.1.17:9182']
