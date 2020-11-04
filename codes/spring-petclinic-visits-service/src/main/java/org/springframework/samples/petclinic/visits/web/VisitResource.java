@@ -53,14 +53,15 @@ class VisitResource {
     }
 
     @PostMapping("owners/*/pets/{petId}/visits")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void create(
+    @Valid
+    @ResponseStatus(HttpStatus.CREATED)
+    Visit create(
         @Valid @RequestBody final Visit visit,
         @PathVariable("petId") final int petId) {
 
         visit.setPetId(petId);
         VisitResource.log.info("Saving visit {}", visit);
-        this.visitRepository.save(visit);
+        return this.visitRepository.save(visit);
     }
 
     @GetMapping("owners/*/pets/{petId}/visits")

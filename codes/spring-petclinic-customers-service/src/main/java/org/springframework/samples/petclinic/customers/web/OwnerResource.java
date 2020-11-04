@@ -57,11 +57,14 @@ class OwnerResource {
 
     /**
      * Create Owner
+     *
+     * @return
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOwner(@Valid @RequestBody final Owner owner) {
-        this.ownerRepository.save(owner);
+    public Owner createOwner(@Valid @RequestBody final Owner owner)
+    {
+        return this.ownerRepository.save(owner);
     }
 
     /**
