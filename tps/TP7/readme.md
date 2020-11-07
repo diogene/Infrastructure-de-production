@@ -39,6 +39,17 @@ La **seconde étape** consiste a compiler les sources du projet cible :
 
 installer la sécurité basique dans le module vets. pour ce faire reportez vous au TP2.
 
+> :exclamation: Le systeme de sécurité étant e spring security 5 il faut changer la création des utilisateurs.
+
+```java
+   @Override
+   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser(User.withUsername("admin").password("{noop}demo").roles("ADMIN"))
+                .withUser(User.withUsername("user").password("{noop}demo").roles("USER"));
+    }
+```
+
 ### l'agent
 
 télécharger l'agent opentelemetry [ici](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v0.9.0/opentelemetry-javaagent-all.jar)
