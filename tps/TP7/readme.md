@@ -35,6 +35,18 @@ La **seconde étape** consiste a compiler les sources du projet cible :
    ./mvnw clean install
    ```
 
+### preparation de l'application
+
+installer la sécurité basique dans le module vets. pour ce faire reportez vous au TP2.
+
+### l'agent
+
+télécharger l'agent opentelemetry [ici](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v0.9.0/opentelemetry-javaagent-all.jar)
+
+### le collecteur
+
+### l'ui
+
 ### Lancement des composants 
 
 dans un premier temps, tous les composants vont être lancer en mode autonome, sans utiliser consul. Pour ce faire, lancer les commandes :
@@ -43,15 +55,13 @@ dans un premier temps, tous les composants vont être lancer en mode autonome, s
 ```bash
 dans le répertoire code :
 
-java -jar ./target/spring-petclinic-customers-service-2.0.4.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar 
-java -jar ./target/spring-petclinic-vets-service-2.0.4.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar
-java -jar ./target/spring-petclinic-visits-service-2.0.4.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar
-java -jar ./target/spring-petclinic-ui.jar --spring.profiles.active=simple -javaagent:E:/etude/apache-skywalking-apm-bin/agent/skywalking-agent.jar
+jav  -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP7/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -jar ./target/spring-petclinic-customers-service-2.0.4.jar --spring.profiles.active=simple 
+java -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP7/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger  -jar ./target/spring-petclinic-vets-service-2.0.4.jar --spring.profiles.active=simple
+java -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP7/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger  -jar ./target/spring-petclinic-visits-service-2.0.4.jar --spring.profiles.active=simple
+java -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP7/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger  -jar ./target/spring-petclinic-ui.jar --spring.profiles.active=simple
 ```
 
 l'application petclinc est disponible a l'adresse : 
-
-
 
 ### aggregation des flux
 
