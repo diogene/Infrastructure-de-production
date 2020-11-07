@@ -54,5 +54,9 @@ public class ApiGatewayApplication {
                 request -> ServerResponse.ok().contentType(MediaType.TEXT_HTML).syncBody(this.indexHtml));
         return router;
     }
-
+    
+    @Bean
+	public BasicRequestHeaderGatewayFilterFactory basicRequestHeaderGatewayFilterFactory() {
+		return new BasicRequestHeaderGatewayFilterFactory();
+	}
 }
