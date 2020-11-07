@@ -17,7 +17,11 @@ management:
     db: 
       enabled: false
 server:
-  port: 0
+  port: 0 
+logging:
+  level:
+    org:
+      springframework: DEBUG
 
 ---
 spring:
@@ -37,4 +41,8 @@ spring:
 
 
 server:
-  port: ${PORT:8082}
+  port: ${PORT:8082} 
+logging:
+  level:
+    org:
+      springframework: DEBUG
