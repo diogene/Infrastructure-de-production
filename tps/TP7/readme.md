@@ -37,7 +37,7 @@ La **seconde étape** consiste a compiler les sources du projet cible :
 
 ### preparation de l'application
 
-installer la sécurité basique dans le module vets. pour ce faire reportez vous au TP2.
+installer la sécurité basique dans le module vets. pour ce faire reportez vous au TP3.
 
 > :exclamation: Le systeme de sécurité étant e spring security 5 il faut changer la création des utilisateurs.
 
