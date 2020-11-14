@@ -3,10 +3,39 @@ docker run --name elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-no
 
 docker run --link elastic:elasticsearch docker.elastic.co/apm/apm-server:7.9.3 setup --index-management -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["elasticsearch:9200"]'
 
-docker run --name kibana --link elastic:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.9.3
+docker run -d --rm --name elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+docker run -d --rm --name kibana --link elastic:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:7.9.3
+docker run -d --rm --name=apm-server --user=apm-server  --volume="D:/dev/home/apm-server.docker.yml:/usr/share/apm-server/apm-server.yml:ro" -p 14268:14268 -p 14250:14250 -p 8200:8200 --link elastic:elasticsearch --link kibana:kibana  docker.elastic.co/apm/apm-server:7.9.3 --strict.perms=false -e -E output.elasticsearch.hosts=["elasticsearch:9200"]
 
-docker run -d --name=apm-server --user=apm-server  --volume="D:/dev/home/apm-server.docker.yml:/usr/share/apm-server/apm-server.yml:ro" -p 14268:14268 -p 14250:14250 -p 8200:8200 --link elastic:elasticsearch --link kibana:kibana  docker.elastic.co/apm/apm-server:7.9.3 --strict.perms=false -e -E output.elasticsearch.hosts=["elasticsearch:9200"]
+
+docker run --% -d --rm --name=jaeger-collector  -p4267:4267 -p14250:14250 -p14268:14268 -p9411:9411 -p14269:14269 --link elastic:elasticsearch -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://elasticsearch:9200  jaegertracing/jaeger-collector:1.16
+docker run --% -d --rm --name=jaeger-agent  -p6831:6831/udp  -p6832:6832/udp -p5778:5778/tcp  -p5775:5775/udp --link jaeger-collector:jaeger-collector  jaegertracing/jaeger-agent:1.16 --reporter.grpc.host-port=jaeger-collector:14250
+docker run --% -d --rm -p 16686:16686  -p 16687:16687  -e SPAN_STORAGE_TYPE=elasticsearch  -e ES_SERVER_URLS=http://elasticsearch:9200  --link elastic:elasticsearch  jaegertracing/jaeger-query:1.16
 
 
 java --%  -javaagent:D:/dev/home/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -Dotel.exporter.jaeger.service.name=visits-service -Dotel.propagators=jaeger -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.0.4-exec.jar &
 java --%  -javaagent:D:/dev/home/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -Dotel.exporter.jaeger.service.name=customers-service -Dotel.propagators=jaeger -jar ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.0.4.jar &
+
+
+java --%  -javaagent:E:/etude/elastic-apm-agent-1.19.0.jar -Delastic.apm.service_name=visits-service -Delastic.apm.server_urls=http://localhost:8200 -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.0.4-exec.jar
+java --%  -javaagent:E:/etude/elastic-apm-agent-1.19.0.jar -Delastic.apm.service_name=customers-service -jar ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.0.4.jar
+java --%  -javaagent:E:/etude/elastic-apm-agent-1.19.0.jar -Delastic.apm.service_name=vets-service -jar ./spring-petclinic-vets-service/target/spring-petclinic-vets-service-2.0.4.jar
+java --%  -javaagent:E:/etude/elastic-apm-agent-1.19.0.jar -Delastic.apm.service_name=petclinic-ui  -jar ./spring-petclinic-ui/target/spring-petclinic-ui.jar
+
+
+
+docker run --rm -d  --link elastic:elasticsearch  -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://elasticsearch:9200  jaegertracing/jaeger-collector:1.16
+docker run -d --rm  -p 16686:16686  -p 16687:16687  -e SPAN_STORAGE_TYPE=elasticsearch  -e ES_SERVER_URLS=http://elasticsearch:9200   jaegertracing/jaeger-query:1.16
+
+
+
+
+
+
+java --%  -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP8/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -Dotel.exporter.jaeger.service.name=visits-service -Dotel.propagators=jaeger -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.0.4-exec.jar
+java --%  -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP8/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -Dotel.exporter.jaeger.service.name=customers-service -Dotel.propagators=jaeger -jar ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.0.4.jar
+java --%  -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP8/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -Dotel.exporter.jaeger.service.name=vets-service -Dotel.propagators=jaeger -jar ./spring-petclinic-vets-service/target/spring-petclinic-vets-service-2.0.4.jar
+java --%  -javaagent:C:/Users/dioge/OneDrive/Documents/personnel/cours/tps/TP8/opentelemetry-javaagent-all.jar -Dotel.exporter=jaeger -Dotel.exporter.jaeger.service.name=petclinic-ui -Dotel.propagators=jaeger -jar ./spring-petclinic-ui/target/spring-petclinic-ui.jar
+
+
+-p4267:4267 -p14250:14250 -p14268:14268 -p9411:9411 -p14269:14269

@@ -1,4 +1,4 @@
-# INFRASTRUCTURE DE MICROSERVICE
+****# ARCHITECTURE DE MICROSERVICE : gateway
 
 L’objectif de ce TP est mettre en oeuvre une infrastructure pour gérer tous les flux de microservice.
 
@@ -10,26 +10,12 @@ L’objectif de ce TP est mettre en oeuvre une infrastructure pour gérer tous l
 
 ## La mise en place des composants
 
-La **première étape** consiste a installer le serveur de configuration et d'enregistrement des services
-
-1. Télécharger consul [ici](https://www.consul.io/downloads.html)
-2. Installer consul, il suffit de decompresser l'archive
-3. Démarrer consul
-   ```bash
-   ./consul agent -dev -node machine
-   ```
-4. Visualiser la console consul : http://localhost:8500/ui
-![console consul](../TP2/console%20consul.png)
-La capture d'écran montre aussi le composant suivant
-
-
-La **seconde étape** consiste a compiler les sources du projet cible :
-
-1. Télécharger les sources
+1. Intellj est utile uniquement pour modifier l'application. toutes les autres manipulations doivent être réalisées en ligne de commande
+2. Télécharger les sources
    ```bash
    git clone https://github.com/diogene/Infrastructure-de-production.git
    ```
-2. compiler le projet 
+3. compiler le projet 
    ```bash
    cd Infrastructure-de-production/codes
    ./mvnw clean install
@@ -37,7 +23,7 @@ La **seconde étape** consiste a compiler les sources du projet cible :
 
 ### preparation de l'application
 
-installer la sécurité basique dans le module vets. pour ce faire reportez vous au TP2.
+installer la sécurité basique dans le module vets. pour ce faire reportez vous au TP3.
 
 > :exclamation: Le systeme de sécurité étant e spring security 5 il faut changer la création des utilisateurs.
 
@@ -54,7 +40,6 @@ installer la sécurité basique dans le module vets. pour ce faire reportez vous
 
 `spring-petclinic-ui` est l'implémentation de l'UI petclinic écrit en Angularjs avec [wro](https://wro4j.readthedocs.io/en/stable/GettingStarted/) qui est un composant java apportant tous les mécanismes associés a developpement front dans le mode java :  JsHint, CssLint, JsMin, Google Closure compressor, YUI Compressor, UglifyJs, Dojo Shrinksafe, Css Variables Support, JSON Compression, Less, Sass, ...
 
-
 ### Lancement des composants 
 
 dans un premier temps, tous les composants vont être lancer en mode autonome, sans utiliser consul. Pour ce faire, lancer les commandes :
@@ -68,18 +53,14 @@ java -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-servi
 java -jar ./spring-petclinic-ui/target/spring-petclinic-ui.jar --spring.profiles.active=simple
 ```
 
-dans le répertoire code, sous linux : 
-```bash
-java -jar ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.0.4.jar --spring.profiles.active=simple  &
-java -jar ./spring-petclinic-vets-service/target/spring-petclinic-vets-service-2.0.4.jar --spring.profiles.active=simple &
-java -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.0.4-exec.jar --spring.profiles.active=simple &
-java -jar ./spring-petclinic-ui/target/spring-petclinic-ui.jar --spring.profiles.active=simple &
-```
+> :exclamation: Il est imperatif de spécifier le profil a activer, ici c'est `simple`
+
 
 l'application petclinc est disponible a l'adresse : http://localhost:8080/
 ![ui petclinc](spring%20petclinic%20ui.png)
 
 Ici rien ne fonctionne !
+Pour le voir, lancer la `devTool`
 
 ### aggregation des flux
 
@@ -122,49 +103,16 @@ spring:
             - Path=/api/customer/**
           filters:
             - StripPrefix=2
+
+server:
+  port: ${PORT:8080} 
+logging:
+  level:
+    org:
+      springframework: DEBUG
 ```
 
 pour chaque type d'appel on defini la nouvelle destination. `StripPrefix` permet de ne garder que `/customer/**` (par exemple) pour le transfert de la request
-
-Pour passer par consul :
-
-```yml
-spring:
-  cloud:
-    gateway:
-      enabled: true
-      routes:
-        - id: vets-service
-          uri: lb://vets-service
-          predicates:
-            - Path=/api/vet/{segment}
-          filters:
-            - SetPath=/api/{segment}
-        - id: visits-service
-          uri: lb://visits-service
-          predicates:
-            - Path=/api/visit/**
-          filters:
-            - StripPrefix=2
-        - id: customers-service
-          uri: lb://customers-service
-          predicates:
-            - Path=/api/customer/**
-          filters:
-            - StripPrefix=2
-
-server:
-  port: 0
-```
-
-ici on demande a consul quelle est le chemin pour atteindre les services `vets-service` ou `visits-service`, ...
-lancer avec consul :
-```bash
-java -jar ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.0.4.jar
-java -jar ./spring-petclinic-vets-service/target/spring-petclinic-vets-service-2.0.4.jar
-java -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.0.4-exec.jar
-java -jar ./spring-petclinic-ui/target/spring-petclinic-ui.jar
-```
 
 ### filtre de sécurité
 
@@ -270,8 +218,65 @@ on voit l'utilisation du nouveau filtre dans la log :
 
 ## En mode consul
 
+1. Télécharger consul [ici](https://www.consul.io/downloads.html)
+2. Installer consul, il suffit de decompresser l'archive
+3. Démarrer consul
+   ```bash
+   ./consul agent -dev -node machine
+   ```
+4. Visualiser la console consul : http://localhost:8500/ui
+![console consul](../TP2/console%20consul.png)
+La capture d'écran montre aussi le composant suivant
+
+pour faire fonctionner `vet` avec consul il faut faire une modification dans la partie securité et autoriser `/actuator/health` :
+
+```java
+http.csrf().disable() .authorizeRequests() .antMatchers("/actuator/health").permitAll() .anyRequest().authenticated() .and() .httpBasic() .and() .logout().permitAll()
+```
+
+il faut modifier le application.yml pour prendre ne compte consul et récupérer les bonne url
+
+```yml
+spring:
+  cloud:
+    gateway:
+      enabled: true
+      routes:
+        - id: vets-service
+          uri: lb://vets-service
+          predicates:
+            - Path=/api/vet/{segment}
+          filters:
+            - SetPath=/api/{segment}
+        - id: visits-service
+          uri: lb://visits-service
+          predicates:
+            - Path=/api/visit/**
+          filters:
+            - StripPrefix=2
+        - id: customers-service
+          uri: lb://customers-service
+          predicates:
+            - Path=/api/customer/**
+          filters:
+            - StripPrefix=2
+
+server:
+  port: 0
+```
+
+ici on demande a consul quelle est le chemin pour atteindre les services `vets-service` ou `visits-service`, ...
+lancer avec consul :
+```bash
+java -jar ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.0.4.jar
+java -jar ./spring-petclinic-vets-service/target/spring-petclinic-vets-service-2.0.4.jar
+java -jar ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.0.4-exec.jar
+java -jar ./spring-petclinic-ui/target/spring-petclinic-ui.jar
+```
+
+
 Verifier que tous fonctionne en consul et que le load balancing est fonctionnel.
 
-pour cela lancer plusieurs instance des composants
+pour cela lancer plusieurs instance des composants.
 
 donnée moi la log qui permet de voir que le load balancing est bon.
