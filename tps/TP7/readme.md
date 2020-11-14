@@ -228,6 +228,12 @@ on voit l'utilisation du nouveau filtre dans la log :
 ![console consul](../TP2/console%20consul.png)
 La capture d'écran montre aussi le composant suivant
 
+pour faire fonctionner `vet` avec consul il faut faire une modification dans la partie securité et autoriser `/actuator/health` :
+
+```java
+http.csrf().disable() .authorizeRequests() .antMatchers("/actuator/health").permitAll() .anyRequest().authenticated() .and() .httpBasic() .and() .logout().permitAll()
+```
+
 il faut modifier le application.yml pour prendre ne compte consul et récupérer les bonne url
 
 ```yml
