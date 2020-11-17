@@ -27,11 +27,11 @@ le cours infrastructure est découpé en 7 TPs :
 5. [SUIVI DES LOGS](tps/TP5)
 6. [MONITORER UNE APPLICATION](tps/TP6)
 7. [ARCHITECTURE DE MICROSERVICE : gateway](tps/TP7)
-7. [ARCHITECTURE DE MICROSERVICE : APM et TRACING](tps/TP7)
+7. [ARCHITECTURE DE MICROSERVICE : APM et TRACING](tps/TP8)
 
 
 
-# COnfiguration de la console 
+# Configuration de la console 
 
 
 Installer la personnalisation de la console :
